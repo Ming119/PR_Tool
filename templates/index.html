@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}Pull Resquests Tool{% endblock %}
+
+{% block main %}
+<div class="container">
+    {% if kwargs.get('team') is none %}
+    <div id='joinTeamBtn' class="my-3 d-flex justify-content-end"></div>
+    {% else %}
+    <div class="my-3 d-flex justify-content-end">
+        <a href="{{ url_for('uploadFile') }}" class="btn btn-success" role="btn">New Pull Request</a>
+    </div>
+    {% endif %}
+
+    <nav>
+        <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+            <button class="nav-link" id="dcTrack-tab" data-bs-toggle="tab" data-bs-target="#dcTrack" type="button"
+                role="tab" aria-controls="dcTrack" aria-selected="true">dcTrack</button>
+            <button class="nav-link" id="Capstone1-tab" data-bs-toggle="tab" data-bs-target="#Capstone1" type="button"
+                role="tab" aria-controls="Capstone1" aria-selected="false">Capstone 1</button>
+            <button class="nav-link" id="Capstone2-tab" data-bs-toggle="tab" data-bs-target="#Capstone2" type="button"
+                role="tab" aria-controls="Capstone2" aria-selected="false">Capstone 2</button>
+        </div>
+    </nav>
+
+    <div class="tab-content mb-5">
+        <div class="tab-pane fade" id="dcTrack" role="tabpanel" aria-labelledby="dcTrack-tab" tabindex="0">
+            <nav>
+                <div class="nav nav-tabs nav-fill" role="tablist">
+                    <button class="nav-link active" id="dcTrack-open" data-bs-toggle="tab" data-bs-target="#dcTrackopen"
+                        type="button" role="tab" aria-controls="dcTrack-open" aria-selected="true">Open</button>
+                    <button class="nav-link" id="dcTrack-closed" data-bs-toggle="tab" data-bs-target="#dcTrackclosed"
+                        type="button" role="tab" aria-controls="dcTrack-closed" aria-selected="false">Closed</button>
+                </div>
+            </nav>
+
+            <div class="tab-content">
+                <div class="tab-pane fade active show" id="dcTrackopen" role="tabpanel" aria-labelledby="dcTrack-open"
+                    tabindex="0">
+                </div>
+
+                <div class="tab-pane fade" id="dcTrackclosed" role="tabpanel" aria-labelledby="dcTrack-closed"
+                    tabindex="1">
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="Capstone1" role="tabpanel" aria-labelledby="Capstone1-tab" tabindex="1">
+            <nav>
+                <div class="nav nav-tabs nav-fill" role="tablist">
+                    <button class="nav-link active" id="Capstone1-open" data-bs-toggle="tab"
+                        data-bs-target="#Capstone1open" type="button" role="tab" aria-controls="Capstone1-open"
+                        aria-selected="true">Open</button>
+                    <button class="nav-link" id="Capstone1-closed" data-bs-toggle="tab"
+                        data-bs-target="#Capstone1closed" type="button" role="tab" aria-controls="Capstone1-closed"
+                        aria-selected="false">Closed</button>
+                </div>
+            </nav>
+
+            <div class="tab-content">
+                <div class="tab-pane fade active show" id="Capstone1open" role="tabpanel"
+                    aria-labelledby="Capstone1-open" tabindex="0">
+                </div>
+
+                <div class="tab-pane fade" id="Capstone1closed" role="tabpanel" aria-labelledby="Capstone1-closed"
+                    tabindex="1">
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="Capstone2" role="tabpanel" aria-labelledby="Capstone2-tab" tabindex="2">
+            <nav>
+                <div class="nav nav-tabs nav-fill" role="tablist">
+                    <button class="nav-link active" id="Capstone2-open" data-bs-toggle="tab"
+                        data-bs-target="#Capstone2open" type="button" role="tab" aria-controls="Capstone2-open"
+                        aria-selected="true">Open</button>
+                    <button class="nav-link" id="Capstone2-closed" data-bs-toggle="tab"
+                        data-bs-target="#Capstone2closed" type="button" role="tab" aria-controls="Capstone2-closed"
+                        aria-selected="false">Closed</button>
+                </div>
+            </nav>
+
+            <div class="tab-content">
+                <div class="tab-pane fade active show" id="Capstone2open" role="tabpanel"
+                    aria-labelledby="Capstone2-open" tabindex="0">
+                </div>
+
+                <div class="tab-pane fade" id="Capstone2closed" role="tabpanel" aria-labelledby="Capstone2-closed"
+                    tabindex="1">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    let tab = "{{ kwargs.get('team', 'dcTrack') }}"
+    tab = tab.replace(' ', '')
+
+    document.getElementById(tab + "-tab").classList.add("active")
+    document.getElementById(tab).classList.add("show")
+    document.getElementById(tab).classList.add("active")
+
+    let joinTeamBtn = document.getElementById("joinTeamBtn")
+    if (joinTeamBtn) {
+        joinTeamBtn.innerHTML =
+        `<a href="{{ url_for('joinTeam', team='TEAM') }}" class='btn btn-success' type=button>Join ${tab}</a>`
+        .replace("TEAM", tab)
+    }
+
+    document.getElementById("nav-tab").addEventListener("click", function (e) {
+        const tab = this.getElementsByClassName("active")[0].innerHTML;
+
+        if (joinTeamBtn) {
+            document.getElementById("joinTeamBtn").innerHTML =
+                `<a href="{{ url_for('joinTeam', team='TEAM') }}" class='btn btn-success' type=button>Join ${tab}</a>`
+                .replace("TEAM", tab)
+        }
+    });
+
+    tabLabels = document.getElementsByClassName("nav-link");
+    for (let i = 0; i < tabLabels.length; ++i) {
+        tabLabels[i].addEventListener("click", function (e) {
+            const tabData = this.getAttribute("id").split('-');
+            const team = tabData[0];
+            const state = tabData[1];
+
+            if (state === 'tab') updatePRList(team, 'open')
+            else updatePRList(team, state);
+        });
+    }
+
+    function updatePRList(team, state) {
+        const content = document.getElementById(team + state);
+        content.innerHTML =
+            `<div class="d-flex justify-content-center my-5"><div class="dot-pulse"><div class="dot-pulse__dot"></div></div></div>`;
+
+        fetch(`/fetchPRs?team=${team}&state=${state}`)
+            .then((res) => {
+                if (res.status === 200) return res.json();
+            }).then((json) => {
+                if (json.total_count === 0) {
+                    content.innerHTML =
+                        `<div class="d-flex justify-content-center my-5">
+                            <div class="alert alert-danger" role="alert">
+                                No PRs found.
+                            </div>
+                        </div>`;
+                    return;
+                }
+
+                var html = `<ul class="list-group list-group-flush">`;
+
+                let prs = json.items;
+                for (var i = 0; i < prs.length; ++i) {
+                    html +=
+                        `<a class="text-decoration-none" href="${ prs[i].html_url }" target="_blank"><li class="list-group-item">`;
+
+                    if (prs[i].state === 'open')
+                        html +=
+                        `<svg style="filter: invert(54%) sepia(76%) saturate(387%) hue-rotate(77deg) brightness(96%) contrast(95%); viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.177 3.073L9.573.677A.25.25 0 0110 .854v4.792a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25zM11 2.5h-1V4h1a1 1 0 011 1v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5zm1 10.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM3.75 12a.75.75 0 100 1.5.75.75 0 000-1.5z"></path></svg>`;
+                    else
+                        html +=
+                        `<svg style="filter: invert(42%) sepia(100%) saturate(421%) hue-rotate(218deg) brightness(103%) contrast(94%);"viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd"d="M5 3.254V3.25v.005a.75.75 0 110-.005v.004zm.45 1.9a2.25 2.25 0 10-1.95.218v5.256a2.25 2.25 0 101.5 0V7.123A5.735 5.735 0 009.25 9h1.378a2.251 2.251 0 100-1.5H9.25a4.25 4.25 0 01-3.8-2.346zM12.75 9a.75.75 0 100-1.5.75.75 0 000 1.5zm-8.5 4.5a.75.75 0 100-1.5.75.75 0 000 1.5z"></path></svg>`;
+
+                    html += `${ prs[i].title }`
+
+                    for (var j = 0; j < prs[i].labels.length; ++j)
+                        html +=
+                        `<span class="badge rounded-pill" style="background-color:#${prs[i].labels[j].color}">${ prs[i].labels[j].name }</span>`;
+
+                    if (prs[i].state === 'open')
+                        html +=
+                        `<br /><span>#${ prs[i].number } ${ prs[i].state } by ${ prs[i].user.login } at ${ prs[i].created_at.slice(0, 10) }</span></li></a>`;
+                    else
+                        html +=
+                        `<br /><span>#${ prs[i].number } by ${ prs[i].user.login } ${ prs[i].state } at ${ prs[i].closed_at.slice(0, 10) }</span></li></a>`;
+                }
+                html += `</ul>`;
+                content.innerHTML = html;
+            });
+    }
+    
+    window.onload = () => {
+        updatePRList(tab, 'open');
+    }
+</script>
+
+
+{% endblock %}

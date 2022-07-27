@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Pull Resquests Tool{% endblock %}
+
+{% block main %}
+<form id="fileUploadForm" action="uploadFile" method="POST" enctype="multipart/form-data">
+    <div id="drop-zone" class="card my-5" style="height: 75vh;">
+        <div class="card-body text-center d-flex justify-content-center align-items-center">
+            <div id='load' class='three-body d-none'><div class='three-body__dot'></div><div class='three-body__dot'></div><div class='three-body__dot'></div></div>
+            <div id='noteText'>
+                <h4 class="card-text text-secondary">Click here to select a file.</h4>
+                <h6 class="card-text text-secondary">Note that your filename must match the corresponding branch name.</h6>
+            </div>
+        </div>
+    </div>
+    <input class="d-none" id="input" name="file" type="file" accept=".txt">
+</form>
+{% endblock %}
+
+{% block script %}
+<script>
+    const dropZone = document.getElementById("drop-zone");
+
+    dropZone.addEventListener("drop", (event) => {
+        event.preventDefault();
+
+        if (event.dataTransfer.files) {
+            if (event.dataTransfer.files.length > 1) {
+                alert("Only one file is allowed to upload once.");
+                return;
+            }
+
+            if (event.dataTransfer.files[0].type !== "text/plain") {
+                alert("Only text file is allowed.");
+                return;
+            }
+
+            let form = document.getElementById("fileUploadForm");
+            let input = document.getElementById("input");
+            input.files[0] = event.dataTransfer.files[0];
+
+            document.getElementById('noteText').classList.add('d-none');
+            document.getElementById('load').classList.remove('d-none');
+
+            form.submit();
+        }
+    })
+
+    dropZone.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+    })
+
+    dropZone.addEventListener("click", (event) => {
+        let form = document.getElementById("fileUploadForm");
+        let input = document.getElementById("input");
+
+        input.onchange = _ => {
+            if (input.files.length === 0)
+                return;
+
+            if (input.files.length > 1)
+                alert("Only one file is allowed to upload once.");
+
+            if (input.files[0].type !== "text/plain") 
+                alert("Only text file is allowed.");
+
+            document.getElementById('noteText').classList.add('d-none');
+            document.getElementById('load').classList.remove('d-none');
+
+            form.submit();
+        };
+
+        input.click();
+    })
+</script>
+{% endblock %}
