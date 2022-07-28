@@ -17,24 +17,20 @@ class GitHubApi(GitHub):
     def current_user(self):
         return self.get("user")["login"]
 
-    def list_pull_requests(self, authors:list, state:str, per_page:int=30, page:int=1):
-        query = f"/search/issues?q=repo:{self.OWNER}/{self.REPO}+state:{state}+type:pr"
+    def list_pull_requests(self, authors:list, state:str, per_page:int=30, page:int=1, search:str=''):
+        query = f"/search/issues?per_page={per_page}&page={page}&q=repo:{self.OWNER}/{self.REPO}+state:{state}+type:pr"
+
+        if search:
+            query += f"+{search}"
+        
         for author in authors:
             query += f"+author:{author}"
+        
         if state == 'closed':
             query += '&sort=updated'
-        return self.get(query)
+        elif state == 'open':
+            query += '&sort=created'
 
-    def list_opened_pull_requests(self, authors:list, sort:str="created", order:str="desc", per_page:int=30, page:int=1):
-        query = f"/search/issues?sort={sort}&order={order}&per_page={per_page}&page={page}&q=repo:{self.OWNER}/{self.REPO}+state:open+type:pr"
-        for author in authors:
-            query += f"+author:{author}"
-        return self.get(query)
-
-    def list_closed_pull_requests(self, authors:list, sort:str="updated", order:str="desc", per_page:int=30, page:int=1):
-        query = f"/search/issues?sort={sort}&order={order}&per_page={per_page}&page={page}&q=repo:{self.OWNER}/{self.REPO}+state:closed+type:pr"
-        for author in authors:
-            query += f"+author:{author}"
         return self.get(query)
 
     def create_a_pull_request(self, head:str, base:str, title:str, body:str):

@@ -4,87 +4,85 @@
 
 {% block main %}
 <div class="container">
-    {% if kwargs.get('team') is none %}
-    <div id='joinTeamBtn' class="my-3 d-flex justify-content-end"></div>
-    {% else %}
-    <div class="my-3 d-flex justify-content-end">
-        <a href="{{ url_for('uploadFile') }}" class="btn btn-success" role="btn">New Pull Request</a>
-    </div>
-    {% endif %}
-
-    <nav>
-        <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
-            <button class="nav-link" id="dcTrack-tab" data-bs-toggle="tab" data-bs-target="#dcTrack" type="button"
-                role="tab" aria-controls="dcTrack" aria-selected="true">dcTrack</button>
-            <button class="nav-link" id="Capstone1-tab" data-bs-toggle="tab" data-bs-target="#Capstone1" type="button"
-                role="tab" aria-controls="Capstone1" aria-selected="false">Capstone 1</button>
-            <button class="nav-link" id="Capstone2-tab" data-bs-toggle="tab" data-bs-target="#Capstone2" type="button"
-                role="tab" aria-controls="Capstone2" aria-selected="false">Capstone 2</button>
+    <div class="row my-3">
+        <div class="col-md-9">
+            <div class="input-group">
+                <input id='search_pr' class="form-control" type="search" placeholder="Search">
+                <!-- TODO: add a clear button when the search bar is not empty. -->
+                <button id='search_pr_btn' class="input-group-text btn btn-outline-success">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
         </div>
+        <div class="col-md-3 d-flex justify-content-center">
+            {% if kwargs.get('team') is none %}
+            <div id='joinTeamBtn'></div>
+            {% else %}
+            <div>
+                <a href="{{ url_for('uploadFile') }}" class="btn btn-success" role="btn">New Pull Request</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <nav class="nav nav-tabs nav-fill" id="teamTabs">
+        <button class="nav-link" id="dcTrack-tab" data-bs-toggle="tab" data-bs-target="#dcTrack-content"
+            aria-controls="dcTrack-content">dcTrack</button>
+        <button class="nav-link" id="Capstone1-tab" data-bs-toggle="tab" data-bs-target="#Capstone1-content"
+            aria-controls="Capstone1-content">Capstone 1</button>
+        <button class="nav-link" id="Capstone2-tab" data-bs-toggle="tab" data-bs-target="#Capstone2-content"
+            aria-controls="Capstone2-content">Capstone 2</button>
     </nav>
 
     <div class="tab-content mb-5">
-        <div class="tab-pane fade" id="dcTrack" role="tabpanel" aria-labelledby="dcTrack-tab" tabindex="0">
-            <nav>
-                <div class="nav nav-tabs nav-fill" role="tablist">
-                    <button class="nav-link active" id="dcTrack-open" data-bs-toggle="tab" data-bs-target="#dcTrackopen"
-                        type="button" role="tab" aria-controls="dcTrack-open" aria-selected="true">Open</button>
-                    <button class="nav-link" id="dcTrack-closed" data-bs-toggle="tab" data-bs-target="#dcTrackclosed"
-                        type="button" role="tab" aria-controls="dcTrack-closed" aria-selected="false">Closed</button>
-                </div>
+        <div class="tab-pane fade" id="dcTrack-content" role="tabpanel" aria-labelledby="dcTrack-tab" tabindex="0">
+            <nav class="nav nav-tabs nav-fill">
+                <button class="stateTabs nav-link active" id="dcTrack-open" data-bs-toggle="tab" data-bs-target="#dcTrackopen"
+                    aria-controls="dcTrack-open">Open</button>
+                <button class="stateTabs nav-link" id="dcTrack-closed" data-bs-toggle="tab" data-bs-target="#dcTrackclosed"
+                    aria-controls="dcTrack-closed">Closed</button>
             </nav>
 
             <div class="tab-content">
                 <div class="tab-pane fade active show" id="dcTrackopen" role="tabpanel" aria-labelledby="dcTrack-open"
                     tabindex="0">
                 </div>
-
                 <div class="tab-pane fade" id="dcTrackclosed" role="tabpanel" aria-labelledby="dcTrack-closed"
                     tabindex="1">
                 </div>
             </div>
         </div>
 
-        <div class="tab-pane fade" id="Capstone1" role="tabpanel" aria-labelledby="Capstone1-tab" tabindex="1">
-            <nav>
-                <div class="nav nav-tabs nav-fill" role="tablist">
-                    <button class="nav-link active" id="Capstone1-open" data-bs-toggle="tab"
-                        data-bs-target="#Capstone1open" type="button" role="tab" aria-controls="Capstone1-open"
-                        aria-selected="true">Open</button>
-                    <button class="nav-link" id="Capstone1-closed" data-bs-toggle="tab"
-                        data-bs-target="#Capstone1closed" type="button" role="tab" aria-controls="Capstone1-closed"
-                        aria-selected="false">Closed</button>
-                </div>
+        <div class="tab-pane fade" id="Capstone1-content" role="tabpanel" aria-labelledby="Capstone1-tab" tabindex="1">
+            <nav class="nav nav-tabs nav-fill" role="tablist">
+                <button class="stateTabs nav-link active" id="Capstone1-open" data-bs-toggle="tab" data-bs-target="#Capstone1open"
+                    aria-controls="Capstone1-open">Open</button>
+                <button class="stateTabs nav-link" id="Capstone1-closed" data-bs-toggle="tab" data-bs-target="#Capstone1closed"
+                    aria-controls="Capstone1-closed">Closed</button>
             </nav>
 
             <div class="tab-content">
                 <div class="tab-pane fade active show" id="Capstone1open" role="tabpanel"
                     aria-labelledby="Capstone1-open" tabindex="0">
                 </div>
-
                 <div class="tab-pane fade" id="Capstone1closed" role="tabpanel" aria-labelledby="Capstone1-closed"
                     tabindex="1">
                 </div>
             </div>
         </div>
 
-        <div class="tab-pane fade" id="Capstone2" role="tabpanel" aria-labelledby="Capstone2-tab" tabindex="2">
-            <nav>
-                <div class="nav nav-tabs nav-fill" role="tablist">
-                    <button class="nav-link active" id="Capstone2-open" data-bs-toggle="tab"
-                        data-bs-target="#Capstone2open" type="button" role="tab" aria-controls="Capstone2-open"
-                        aria-selected="true">Open</button>
-                    <button class="nav-link" id="Capstone2-closed" data-bs-toggle="tab"
-                        data-bs-target="#Capstone2closed" type="button" role="tab" aria-controls="Capstone2-closed"
-                        aria-selected="false">Closed</button>
-                </div>
+        <div class="tab-pane fade" id="Capstone2-content" role="tabpanel" aria-labelledby="Capstone2-tab" tabindex="2">
+            <nav class="nav nav-tabs nav-fill" role="tablist">
+                <button class="stateTabs nav-link active" id="Capstone2-open" data-bs-toggle="tab" data-bs-target="#Capstone2open"
+                    aria-controls="Capstone2-open">Open</button>
+                <button class="stateTabs nav-link" id="Capstone2-closed" data-bs-toggle="tab" data-bs-target="#Capstone2closed"
+                    aria-controls="Capstone2-closed">Closed</button>
             </nav>
 
             <div class="tab-content">
                 <div class="tab-pane fade active show" id="Capstone2open" role="tabpanel"
                     aria-labelledby="Capstone2-open" tabindex="0">
                 </div>
-
                 <div class="tab-pane fade" id="Capstone2closed" role="tabpanel" aria-labelledby="Capstone2-closed"
                     tabindex="1">
                 </div>
@@ -96,48 +94,28 @@
 
 {% block script %}
 <script>
-    let tab = "{{ kwargs.get('team', 'dcTrack') }}"
-    tab = tab.replace(' ', '')
+    let currentTeam = 'dcTrack';
+    let currentTab = 'dcTrack';
+    let currentState = 'open';
+    let currentSearch = '';
 
-    document.getElementById(tab + "-tab").classList.add("active")
-    document.getElementById(tab).classList.add("show")
-    document.getElementById(tab).classList.add("active")
-
-    let joinTeamBtn = document.getElementById("joinTeamBtn")
-    if (joinTeamBtn) {
-        joinTeamBtn.innerHTML =
-        `<a href="{{ url_for('joinTeam', team='TEAM') }}" class='btn btn-success' type=button>Join ${tab}</a>`
-        .replace("TEAM", tab)
-    }
-
-    document.getElementById("nav-tab").addEventListener("click", function (e) {
-        const tab = this.getElementsByClassName("active")[0].innerHTML;
-
+    function updateJoinTeamBtn() {
+        let joinTeamBtn = document.getElementById("joinTeamBtn")
         if (joinTeamBtn) {
-            document.getElementById("joinTeamBtn").innerHTML =
-                `<a href="{{ url_for('joinTeam', team='TEAM') }}" class='btn btn-success' type=button>Join ${tab}</a>`
-                .replace("TEAM", tab)
+            joinTeamBtn.innerHTML =
+                `<a href="{{ url_for('joinTeam', team='TEAM') }}" class='btn btn-success' type=button>Join ${currentTeam}</a>`
+                .replace("TEAM", currentTab)
         }
-    });
-
-    tabLabels = document.getElementsByClassName("nav-link");
-    for (let i = 0; i < tabLabels.length; ++i) {
-        tabLabels[i].addEventListener("click", function (e) {
-            const tabData = this.getAttribute("id").split('-');
-            const team = tabData[0];
-            const state = tabData[1];
-
-            if (state === 'tab') updatePRList(team, 'open')
-            else updatePRList(team, state);
-        });
     }
 
-    function updatePRList(team, state) {
+    function updatePRList(team, state, value) {
+        if (value === undefined) value = '';
+
         const content = document.getElementById(team + state);
         content.innerHTML =
             `<div class="d-flex justify-content-center my-5"><div class="dot-pulse"><div class="dot-pulse__dot"></div></div></div>`;
 
-        fetch(`/fetchPRs?team=${team}&state=${state}`)
+        fetch(`/fetchPRs?team=${team}&state=${state}&search=${value}`)
             .then((res) => {
                 if (res.status === 200) return res.json();
             }).then((json) => {
@@ -182,9 +160,54 @@
                 content.innerHTML = html;
             });
     }
-    
+
+    let teamTabs = document.getElementById("teamTabs").getElementsByTagName("button");
+    for (let i = 0; i < teamTabs.length; ++i) {
+        teamTabs[i].addEventListener("click", e => {
+            currentTeam  = e.target.innerHTML;
+            currentTab   = e.target.id.split('-')[0];
+            currentState = document.getElementById(currentTab + '-content').getElementsByClassName('active')[0].id.split('-')[1];
+
+            updateJoinTeamBtn();
+            updatePRList(currentTeam, currentState, currentSearch);
+        });
+    }
+
+    let stateTabs = document.getElementsByClassName("stateTabs");
+    for (let i = 0; i < stateTabs.length; ++i) {
+        stateTabs[i].addEventListener("click", e => {
+            currentState = e.target.id.split('-')[1];
+            updatePRList(currentTab, currentState, currentSearch);
+        });
+    }
+
+    let searchBar = document.getElementById('search_pr');
+    searchBar.addEventListener('input', e => currentSearch = e.target.value);
+    searchBar.addEventListener('keypress', (e) => {
+        if (e.keyCode === 13) {
+            currentSearch = e.target.value;
+            updatePRList(currentTab, currentState, currentSearch);
+        }
+    });
+
+    let searchBtn = document.getElementById('search_pr_btn');
+    searchBtn.addEventListener('click', e => {
+        currentSearch = searchBar.value;
+        updatePRList(currentTab, currentState, currentSearch);
+    });
+
     window.onload = () => {
-        updatePRList(tab, 'open');
+        currentTeam = "{{ kwargs.get('team', 'dcTrack') }}";
+        currentState = 'open';
+        currentSearch = '';
+
+        currentTab = currentTeam.replace(' ', '');
+
+        document.getElementById(currentTab + '-tab').classList.add('active');
+        document.getElementById(currentTab + '-content').classList.add('active', 'show');
+
+        updateJoinTeamBtn();
+        updatePRList(currentTab, currentState, currentSearch);
     }
 </script>
 

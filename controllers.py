@@ -23,8 +23,9 @@ def fetchPRs():
     if session.get("token", None) is None:
         return redirect(url_for("login"))
     
-    team  = request.args.get("team")
-    state = request.args.get("state")
+    team   = request.args.get("team")
+    state  = request.args.get("state")
+    search = request.args.get("search")
 
     if ('Capstone' in team):
         team = team[0:-1] + " " + team[-1]
@@ -33,7 +34,7 @@ def fetchPRs():
     if not team_members: return jsonify({'total_count': 0})
     team_members_list = [team_member.user for team_member in team_members]
     
-    resp = github.list_pull_requests(team_members_list, state)
+    resp = github.list_pull_requests(team_members_list, state, search=search)
     return jsonify(resp)
 
 
