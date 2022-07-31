@@ -163,12 +163,12 @@ def newPullRequest():
 
     kwargs["title"] = session.get("fileName").replace(".txt", "")
     kwargs["body"] = base64.b64decode(template.get("content")) \
-                        .decode("utf-8") \
-                        .replace("\n", f"\n\nThis branch is based on {github.BRANCH}\nWe have already run CI.\nPlease have a look.\n", 1) \
-                        .replace("If this is a relatively large or complex change, please explain why you chose the solution you did and what alternatives you considered.\n", "", 1) \
-                        .replace("\n", "&#13;&#10;") \
-                        .replace("- [ ]", "- [x]") \
-                    + session.get("fileContent").replace("\r\n", "&#13;&#10;")
+                        .decode('utf-8') \
+                        .replace('## Your one line summary goes here (additional details go at the end)\n', f'This branch is based on {github.BRANCH}\nWe have already run CI.\nPlease have a look.\n', 1) \
+                        .replace('- [ ]', '- [x]') \
+                        .replace('If this is a relatively large or complex change, please explain why you chose the solution you did and what alternatives you considered.\n', '', 1) \
+                        .replace('\n', '&#13;&#10;') \
+                    + session.get('fileContent').replace('\r\n', '&#13;&#10;')
 
     teamReviewers = TeamReviewer.getTeamReviewers(kwargs.get("team"))
     teamAssignees = TeamAssignee.getTeamAssignees(kwargs.get("team"))
