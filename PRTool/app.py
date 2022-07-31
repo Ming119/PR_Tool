@@ -3,7 +3,6 @@ app.py
 """
 
 from argparse import ArgumentParser
-
 from flask import Flask
 
 app = Flask(__name__)
