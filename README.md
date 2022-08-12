@@ -98,7 +98,7 @@ This project is aim to better PR management and faster/easier PR creation.
 [forks-shield]: https://img.shields.io/github/forks/Ming119/PR_Tool.svg?style=for-the-badge
 [forks-url]: https://github.com/Ming119/PR_Tool/network/members
 [stars-shield]: https://img.shields.io/github/stars/Ming119/PR_Tool.svg?style=for-the-badge
-[stars-url]: https://github.com/Ming119/PR_Toolo/stargazers
+[stars-url]: https://github.com/Ming119/PR_Tool/stargazers
 [issues-shield]: https://img.shields.io/github/issues/Ming119/PR_Tool.svg?style=for-the-badge
 [issues-url]: https://github.com/Ming119/PR_Tool/issues
 [license-shield]: https://img.shields.io/github/license/Ming119/PR_Tool?label=license&style=for-the-badge
