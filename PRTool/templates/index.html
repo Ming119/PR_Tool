@@ -118,8 +118,8 @@
         fetch(`/fetchPRs?team=${team}&state=${state}&search=${value}`)
             .then((res) => {
                 if (res.status === 200) return res.json();
-            }).then((json) => {
-                if (json.total_count === 0) {
+            }).then((prs) => {
+                if (prs.length === 0) {
                     content.innerHTML =
                         `<div class="d-flex justify-content-center my-5">
                             <div class="alert alert-danger" role="alert">
@@ -131,7 +131,6 @@
 
                 var html = `<ul class="list-group list-group-flush">`;
 
-                let prs = json.items;
                 for (var i = 0; i < prs.length; ++i) {
                     html +=
                         `<a class="text-decoration-none" href="${ prs[i].html_url }" target="_blank"><li class="list-group-item">`;
@@ -151,7 +150,7 @@
 
                     if (prs[i].state === 'open')
                         html +=
-                        `<br /><span>#${ prs[i].number } ${ prs[i].state } by ${ prs[i].user.login } at ${ prs[i].created_at.slice(0, 10) }</span></li></a>`;
+                        `<br /><span>#${ prs[i].number } base on ${prs[i].base.ref} is ${ prs[i].state } by ${ prs[i].user.login } at ${ prs[i].created_at.slice(0, 10) }</span></li></a>`;
                     else
                         html +=
                         `<br /><span>#${ prs[i].number } by ${ prs[i].user.login } ${ prs[i].state } at ${ prs[i].closed_at.slice(0, 10) }</span></li></a>`;

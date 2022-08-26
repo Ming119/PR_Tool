@@ -33,6 +33,9 @@ class GitHubApi(GitHub):
 
         return self.get(query)
 
+    def get_a_pull_request(self, pull_number:int):
+        return self.get(f"/repos/{self.OWNER}/{self.REPO}/pulls/{pull_number}")
+
     def create_a_pull_request(self, head:str, base:str, title:str, body:str):
         return self.post(f"/repos/{self.OWNER}/{self.REPO}/pulls", data={
             "head":  head,

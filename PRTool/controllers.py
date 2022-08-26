@@ -1,6 +1,6 @@
 import base64
+import json
 from collections import defaultdict
-from threading import local
 from flask import current_app, request, session, flash, render_template, redirect, url_for, make_response, jsonify
 from util import github
 
@@ -34,7 +34,12 @@ def fetchPRs():
     if not team_members: return jsonify({'total_count': 0})
     team_members_list = [team_member.user for team_member in team_members]
     
-    resp = github.list_pull_requests(team_members_list, state, search=search)
+    issues = github.list_pull_requests(team_members_list, state, search=search)
+    if (state == 'closed'):
+        return jsonify(issues['items'])
+    
+    issues_number = [issue['number'] for issue in issues['items']]
+    resp = [github.get_a_pull_request(issue_number) for issue_number in issues_number]
     return jsonify(resp)
 
 
