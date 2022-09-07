@@ -25,11 +25,6 @@ class GitHubApi(GitHub):
         
         for author in authors:
             query += f"+author:{author}"
-        
-        if state == 'closed':
-            query += '&sort=updated'
-        elif state == 'open':
-            query += '&sort=created'
 
         return self.get(query)
 

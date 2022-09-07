@@ -1,7 +1,8 @@
 import base64
 import json
+import threading
 from collections import defaultdict
-from flask import current_app, request, session, flash, render_template, redirect, url_for, make_response, jsonify
+from flask import current_app, request, session, flash, render_template, redirect, url_for, make_response, jsonify, copy_current_request_context
 from util import github
 
 from models import TeamMember, TeamAssignee, TeamLabel, TeamReviewer
@@ -35,11 +36,26 @@ def fetchPRs():
     team_members_list = [team_member.user for team_member in team_members]
     
     issues = github.list_pull_requests(team_members_list, state, search=search)
+
     if (state == 'closed'):
-        return jsonify(issues['items'])
+        resp = sorted(issues['items'], key=lambda x: x['closed_at'], reverse=True)
+        return jsonify(resp)
     
     issues_number = [issue['number'] for issue in issues['items']]
-    resp = [github.get_a_pull_request(issue_number) for issue_number in issues_number]
+    
+    @copy_current_request_context
+    def job(issue_num):
+        resp.append(github.get_a_pull_request(issue_num))
+
+    resp = []
+    threads = [threading.Thread(target=job, args=(issue_number,)) for issue_number in issues_number]
+
+    for i in range(len(issues_number)):
+        threads[i].start()
+    for i in range(len(issues_number)):
+        threads[i].join()
+
+    resp = sorted(resp, key=lambda x: x['created_at'], reverse=True)
     return jsonify(resp)
 
 
