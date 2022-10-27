@@ -41,8 +41,8 @@
             document.getElementById('noteText').classList.add('d-none');
             document.getElementById('load').classList.remove('d-none');
 
-            input.files = e.dataTransfer.files;
-            
+            input.files = event.dataTransfer.files;
+
             form.submit();
         }
     }, false)
