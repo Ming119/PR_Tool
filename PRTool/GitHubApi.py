@@ -1,4 +1,3 @@
-from typing_extensions import Self
 from flask_github import GitHub
 import config
 
