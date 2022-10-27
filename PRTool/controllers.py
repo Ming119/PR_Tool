@@ -218,7 +218,7 @@ def changeLogs():
 
     return render_template("changeLogs.html", kwargs=kwargs)
 
-@current_app.route("/help", method=["GET"])
+@current_app.route("/help", methods=["GET"])
 def help():
     if session.get("token", None) is None:
         return redirect(url_for("login"))
