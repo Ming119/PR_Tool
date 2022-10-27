@@ -8,7 +8,6 @@
         <div class="col-md-9">
             <div class="input-group">
                 <input id='search_pr' class="form-control" type="search" placeholder="Search">
-                <!-- TODO: add a clear button when the search bar is not empty. -->
                 <button id='search_pr_btn' class="input-group-text btn btn-outline-success">
                     <i class="bi bi-search"></i>
                 </button>
@@ -119,7 +118,7 @@
             .then((res) => {
                 if (res.status === 200) return res.json();
             }).then((prs) => {
-                if (prs.length === 0) {
+                if (prs.length === 0 || prs.total_count === 0) {
                     content.innerHTML =
                         `<div class="d-flex justify-content-center my-5">
                             <div class="alert alert-danger" role="alert">
