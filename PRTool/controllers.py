@@ -217,3 +217,16 @@ def changeLogs():
     if team_members: kwargs["team"] = team_members.team
 
     return render_template("changeLogs.html", kwargs=kwargs)
+
+@current_app.route("/help", method=["GET"])
+def help():
+    if session.get("token", None) is None:
+        return redirect(url_for("login"))
+
+    kwargs = defaultdict(list)
+    kwargs["user"] = github.current_user()
+    team_members = TeamMember.getTeamMembers(kwargs.get("user"))
+    if team_members: kwargs["team"] = team_members.team
+
+    return render_template("help.html", kwargs=kwargs)
+    
