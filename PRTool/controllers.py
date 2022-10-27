@@ -155,10 +155,10 @@ def newPullRequest():
         TeamAssignee.add(kwargs["team"], assignees)
         TeamLabel.add(kwargs["team"], lables)
 
-        #res = github.create_a_pull_request(base=base, head=head, title=title, body=body)
-        #github.request_reviewers_for_a_pull_request(pull_number=res["number"], reviewers=reviewers)
-        #github.add_assignees_to_an_issue(issue_number=res["number"], assignees=assignees)
-        #github.add_labels_to_an_issue(issue_number=res["number"], labels=lables)
+        res = github.create_a_pull_request(base=base, head=head, title=title, body=body)
+        github.request_reviewers_for_a_pull_request(pull_number=res["number"], reviewers=reviewers)
+        github.add_assignees_to_an_issue(issue_number=res["number"], assignees=assignees)
+        github.add_labels_to_an_issue(issue_number=res["number"], labels=lables)
 
         return redirect(url_for("index"))
 
