@@ -24,6 +24,9 @@
     dropZone.addEventListener("drop", (event) => {
         event.preventDefault();
 
+        let form = document.getElementById("fileUploadForm");
+        let input = document.getElementById("input");
+
         if (event.dataTransfer.files) {
             if (event.dataTransfer.files.length > 1) {
                 alert("Only one file is allowed to upload once.");
@@ -35,16 +38,14 @@
                 return;
             }
 
-            let form = document.getElementById("fileUploadForm");
-            let input = document.getElementById("input");
-            input.files[0] = event.dataTransfer.files[0];
-
             document.getElementById('noteText').classList.add('d-none');
             document.getElementById('load').classList.remove('d-none');
 
+            input.files = e.dataTransfer.files;
+            
             form.submit();
         }
-    })
+    }, false)
 
     dropZone.addEventListener("dragover", (event) => {
         event.preventDefault();
