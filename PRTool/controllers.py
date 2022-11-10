@@ -50,10 +50,10 @@ def fetchPRs():
     resp = []
     threads = [threading.Thread(target=job, args=(issue_number,)) for issue_number in issues_number]
 
-    for i in range(len(issues_number)):
-        threads[i].start()
-    for i in range(len(issues_number)):
-        threads[i].join()
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
 
     resp = sorted(resp, key=lambda x: x['created_at'], reverse=True)
     return jsonify(resp)
@@ -82,10 +82,15 @@ def authorized(access_token):
 
 @current_app.route("/logout", methods=["GET"])
 def logout():
-    # github.logout(session["token"])
+    token = session.get("token", None)
+    if token is None:
+        return redirect(url_for("login"))
+
+    github.logout(token)
     res = make_response(redirect(url_for("index")))
     session.pop("token")
     res.set_cookie(key='session', value='', expires=0)
+    # github.delete_an_app_authorization(token)
     return res
 
 @current_app.route("/joinTeam/<team>", methods=["GET"])
@@ -156,9 +161,28 @@ def newPullRequest():
         TeamLabel.add(kwargs["team"], lables)
 
         res = github.create_a_pull_request(base=base, head=head, title=title, body=body)
-        github.request_reviewers_for_a_pull_request(pull_number=res["number"], reviewers=reviewers)
-        github.add_assignees_to_an_issue(issue_number=res["number"], assignees=assignees)
-        github.add_labels_to_an_issue(issue_number=res["number"], labels=lables)
+        
+        @copy_current_request_context
+        def job_request_reviewers_for_a_pull_request(reviewers):
+            github.request_reviewers_for_a_pull_request(pull_number=res["number"], reviewers=reviewers)
+        
+        @copy_current_request_context
+        def add_assignees_to_an_issue(assignees):
+            github.add_assignees_to_an_issue(issue_number=res["number"], assignees=assignees)
+        
+        @copy_current_request_context
+        def add_labels_to_an_issue(lables):
+            github.add_labels_to_an_issue(issue_number=res["number"], labels=lables)
+
+        threads = [threading.Thread(target=job_request_reviewers_for_a_pull_request, args=(reviewers,)),
+                   threading.Thread(target=add_assignees_to_an_issue, args=(assignees,)),
+                   threading.Thread(target=add_labels_to_an_issue, args=(lables,))]
+        
+        for thread in threads:
+            thread.start()
+        
+        for thread in threads:
+            thread.join()
 
         return redirect(url_for("index"))
 

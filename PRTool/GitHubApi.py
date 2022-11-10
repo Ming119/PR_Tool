@@ -54,26 +54,32 @@ class GitHubApi(GitHub):
         })
 
     def get_repository_content(self, path:str, branch:str=''):
-        return self.get(f"repos/{self.OWNER}/{self.REPO}/contents/{path}", params={
-                "ref": branch or self.BRANCH
-            })
+        return self.get(f"/repos/{self.OWNER}/{self.REPO}/contents/{path}", params={
+            "ref": branch or self.BRANCH
+        })
 
     def list_branches(self, per_page:int=30, page:int=1):
-        return self.get(f"repos/{self.OWNER}/{self.REPO}/branches", params={
-                "per_page": per_page,
-                "page": page
-            })
+        return self.get(f"/repos/{self.OWNER}/{self.REPO}/branches", params={
+            "per_page": per_page,
+            "page": page
+        })
 
     def get_a_branch(self, branch:str):
-        return self.get(f"repos/{self.OWNER}/{self.REPO}/branches/{branch}")
+        return self.get(f"/repos/{self.OWNER}/{self.REPO}/branches/{branch}")
 
     def list_organization_members(self, filter:str="all", role:str="all", per_page:int=30, page:int=1):
-        return self.get(f"orgs/{self.OWNER}/members", params={
-                "filter": filter,
-                "role": role,
-                "per_page": per_page,
-                "page": page
-            })
+        return self.get(f"/orgs/{self.OWNER}/members", params={
+            "filter": filter,
+            "role": role,
+            "per_page": per_page,
+            "page": page
+        })
     
     def list_label(self):
         return self.get(f"/repos/{self.OWNER}/{self.REPO}/labels")
+
+    # FIXME: 404 not found
+    def delete_an_app_authorization(self, token: str):
+        return self.delete(f"settions/connections/applications/{config.GITHUB_CLIENT_ID}/grant", data={
+            "access_token": token
+        })
