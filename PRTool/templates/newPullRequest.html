@@ -41,11 +41,20 @@
 
     <div class="row my-3">
         <div class="col-9">
-            <div class="border rounded container">
+            <div class="border rounded container mb-4">
                 <input type="text" class="form-control bg-light my-2" value="{{ kwargs.get('title') }}" name="title"
                     required />
-                <textarea class="form-control bg-light my-2" name="body" id="prBody"
-                    style="height: 50vh;">{% autoescape false %}{{ kwargs.get('body') }}{% endautoescape %}</textarea>
+                <nav class="nav nav-tabs">
+                    <button class="nav-link active" id="textareaWriteBtn" data-bs-toggle="tab" data-bs-target="#textareaWrite"
+                    aria-controls="textareaWrite">Write</button>
+                    <button class="nav-link" id="textareaPreviewBtn" data-bs-toggle="tab" data-bs-target="#textareaPreview"
+                    aria-controls="textareaPreview">Preview</button>
+                </nav>
+                <div class="tab-content">
+                    <textarea class="form-control bg-light mb-2 tab-pane fade active show" name="body" id="textareaWrite"
+                        style="height: 50vh;">{% autoescape false %}{{ kwargs.get('body') }}{% endautoescape %}</textarea>
+                    <div class="form-control bg-light mb-2 tab-pane fade" id="textareaPreview"></div>
+                </div>
             </div>
 
         </div>
@@ -160,6 +169,7 @@
 {% endblock %}
 
 {% block script %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
     reviewersSearchWord = "";
     reviewers = document.getElementsByClassName('reviewersOption');
@@ -254,7 +264,7 @@
 
         for (var i=0; i<options.length; ++i) {
             if (options[i].value === event.target.value) {
-                let prBody = document.getElementById('prBody');
+                let prBody = document.getElementById('textareaWrite');
                 prBody.innerHTML = prBody.innerHTML.replace(currentBranch, event.target.value);
                 currentBranch = event.target.value;
                 break;
@@ -264,7 +274,7 @@
     });
 
     window.onload = () => {
-        for (i = 0; i < reviewers.length; ++i) {
+        for (var i = 0; i < reviewers.length; ++i) {
             if (reviewers[i].getElementsByTagName('input')[0].checked)
                 reviewersList[i].classList.remove('d-none');
 
@@ -272,10 +282,17 @@
                 assigneesList[i].classList.remove('d-none');
         }
 
-        for (i = 0; i < labels.length; ++i) {
+        for (var i = 0; i < labels.length; ++i) {
             if (labels[i].getElementsByTagName('input')[0].checked)
                 labelsList[i].classList.remove('d-none');
         }
     }
+
+    document.getElementById('textareaPreviewBtn').addEventListener('click', (event) => {
+        writeValues = document.getElementById('textareaWrite').value.split('\n');
+        for (var i=0; i<writeValues.length; ++i) {
+            document.getElementById('textareaPreview').innerHTML += marked.parse(writeValues[i]);
+        }
+    });
 </script>
 {% endblock %}
