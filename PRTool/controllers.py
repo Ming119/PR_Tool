@@ -1,6 +1,6 @@
 import base64
-import json
 import threading
+import config
 from collections import defaultdict
 from flask import current_app, request, session, flash, render_template, redirect, url_for, make_response, jsonify, copy_current_request_context
 from util import github
@@ -26,26 +26,37 @@ def fetchPRs():
     
     team   = request.args.get("team")
     state  = request.args.get("state")
-    search = request.args.get("search")
-
-    if ('Capstone' in team):
-        team = team[0:-1] + " " + team[-1]
     
     team_members = TeamMember.getTeamMembers(team=team)
-    if not team_members: return jsonify({'total_count': 0})
+    if not team_members: return jsonify([])
     team_members_list = [team_member.user for team_member in team_members]
     
-    issues = github.list_pull_requests(team_members_list, state, search=search)
+    issues = github.list_pull_requests(team_members_list, state)
 
     if (state == 'closed'):
-        resp = sorted(issues['items'], key=lambda x: x['closed_at'], reverse=True)
+        resp = [{
+            'number': f"#{pr['number']}",
+            'title': pr['title'],
+            'date': pr['closed_at'][:10],
+            'author': pr['user']['login'],
+            'base_on': config.BRANCH,
+            'url': pr['html_url'],
+        } for pr in issues['items']]
         return jsonify(resp)
     
     issues_number = [issue['number'] for issue in issues['items']]
     
     @copy_current_request_context
     def job(issue_num):
-        resp.append(github.get_a_pull_request(issue_num))
+        res = github.get_a_pull_request(issue_num)
+        resp.append({
+            'number': f"#{res['number']}",
+            'title': res['title'],
+            'date': res['created_at'][:10],
+            'author': res['user']['login'],
+            'base_on': res['base']['ref'],
+            'url': res['html_url'],
+        })
 
     resp = []
     threads = [threading.Thread(target=job, args=(issue_number,)) for issue_number in issues_number]
@@ -55,7 +66,6 @@ def fetchPRs():
     for thread in threads:
         thread.join()
 
-    resp = sorted(resp, key=lambda x: x['created_at'], reverse=True)
     return jsonify(resp)
 
 
