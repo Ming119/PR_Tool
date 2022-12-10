@@ -152,8 +152,6 @@
             currentTeam  = e.target.innerHTML;
             currentTab   = e.target.id.split('-')[0];
             currentState = document.getElementById(currentTab + '-content').getElementsByClassName('active')[0].id.split('-')[1];
-
-            updateJoinTeamBtn();
             updatePRList(currentTab, currentState, currentSearch);
         });
     }
@@ -191,7 +189,6 @@
         document.getElementById(currentTab + '-tab').classList.add('active');
         document.getElementById(currentTab + '-content').classList.add('active', 'show');
 
-        updateJoinTeamBtn();
         updatePRList(currentTab, currentState, currentSearch);
     }
 </script>
