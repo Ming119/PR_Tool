@@ -39,6 +39,10 @@ def fetchPRs():
             'title': pr['title'],
             'date': pr['closed_at'][:10],
             'author': pr['user']['login'],
+            'labels': [{
+                'name': label['name'],
+                'color': label['color']
+            } for label in pr['labels']],
             'base_on': config.BRANCH,
             'url': pr['html_url'],
         } for pr in issues['items']]
@@ -53,6 +57,10 @@ def fetchPRs():
             'number': f"#{res['number']}",
             'title': res['title'],
             'date': res['created_at'][:10],
+            'labels': [{
+                'name': label['name'],
+                'color': label['color']
+            } for label in res['labels']],
             'author': res['user']['login'],
             'base_on': res['base']['ref'],
             'url': res['html_url'],
@@ -263,4 +271,3 @@ def help():
     if team_members: kwargs["team"] = team_members.team
 
     return render_template("help.html", kwargs=kwargs)
-    

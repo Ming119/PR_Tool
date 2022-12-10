@@ -23,13 +23,14 @@
                 <tr>
                     <th data-field="number" data-sortable="true" data-formatter="numberFormatter">#</th>
                     <th data-field="title" data-sortable="true">Title</th>
+                    <th data-field="labels" data-sortable="true" data-formatter="labelsFormatter">Labels</th>
                     <th data-field="author" data-sortable="true">Author</th>
                     <th data-field="date" data-sortable="true">Date</th>
                     <th data-field="base_on" data-sortable="true" data-footer-formatter="footerFormatter">Base on</th>
                 </tr>
             </thead>
             <tfoot>
-                <td colspan="4">Total</td>
+                <td colspan="5">Total</td>
                 <td></td>
             </tfoot>
         </table>
@@ -44,7 +45,7 @@
 const $prsTable = $("#PRsTable");
 
 var team = "{{ kwargs.get('team') }}";
-var currentTeam = team;
+var currentTeam = team ? team : 'dcTrack';
 var currentState = 'open';
 
 $('#dcTrack').click(() => {
@@ -77,12 +78,16 @@ function numberFormatter(value, row) {
     return `<a href="${row.url}" target="_blank">${value}</a>`;
 }
 
+function labelsFormatter(value, row) {
+    return value.map(label => `<span class="badge rounded-pill" style="background-color:#${label.color}">${label.name}</span>`).join(' ');
+}
+
 function footerFormatter(data) {
     return data.length;
 }
 
 function tableButtons() {
-    return {
+    buttons = {
         togglePR: {
             text: 'Toggle',
             icon: 'bi bi-toggle-on',
@@ -95,17 +100,26 @@ function tableButtons() {
                 updateTable();
             },
         },
-        newPR: {
+    }
+
+    if (team) {
+        buttons.newPR = {
             text: 'New Pull Request',
             icon: 'bi bi-plus',
             attributes: {
                 title: 'Create a new pull request'
             },
             event: () => {
-                window.location.href = '/uploadFile';
+                window.location.href = team ? '/uploadFile': '';
             },
-        },
+        }
+    } else {
+        buttons.joinTeam = {
+
+        }
     }
+
+    return buttons;
 }
 
 window.onload = () => {
