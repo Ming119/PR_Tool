@@ -14,13 +14,9 @@
             </div>
         </div>
         <div class="col-md-3 d-flex justify-content-center">
-            {% if kwargs.get('team') is none %}
-            <div id='joinTeamBtn'></div>
-            {% else %}
             <div>
                 <a href="{{ url_for('uploadFile') }}" class="btn btn-success" role="btn">New Pull Request</a>
             </div>
-            {% endif %}
         </div>
     </div>
 
@@ -98,15 +94,6 @@
     let currentState = 'open';
     let currentSearch = '';
 
-    function updateJoinTeamBtn() {
-        let joinTeamBtn = document.getElementById("joinTeamBtn")
-        if (joinTeamBtn) {
-            joinTeamBtn.innerHTML =
-                `<a href="{{ url_for('joinTeam', team='TEAM') }}" class='btn btn-success' type=button>Join ${currentTeam}</a>`
-                .replace("TEAM", currentTab)
-        }
-    }
-
     function updatePRList(team, state, value) {
         if (value === undefined) value = '';
 
@@ -165,8 +152,6 @@
             currentTeam  = e.target.innerHTML;
             currentTab   = e.target.id.split('-')[0];
             currentState = document.getElementById(currentTab + '-content').getElementsByClassName('active')[0].id.split('-')[1];
-
-            updateJoinTeamBtn();
             updatePRList(currentTab, currentState, currentSearch);
         });
     }
@@ -204,7 +189,6 @@
         document.getElementById(currentTab + '-tab').classList.add('active');
         document.getElementById(currentTab + '-content').classList.add('active', 'show');
 
-        updateJoinTeamBtn();
         updatePRList(currentTab, currentState, currentSearch);
     }
 </script>

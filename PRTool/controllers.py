@@ -1,29 +1,27 @@
 import base64
-import json
 import threading
-from collections import defaultdict
 from flask import current_app, request, session, flash, render_template, redirect, url_for, make_response, jsonify, copy_current_request_context
-from util import github
+from util import github, authorization_required, org_access_required, team_required
 
 from models import TeamMember, TeamAssignee, TeamLabel, TeamReviewer
 
 @current_app.route("/", methods=['GET', 'POST'])
-def index():
-    if session.get("token", None) is None:
-        return redirect(url_for("login"))
-
-    kwargs = defaultdict(list)
-    kwargs["user"] = github.current_user()
-    team_members = TeamMember.getTeamMembers(kwargs.get("user"))
-    if team_members: kwargs["team"] = team_members.team
+@authorization_required
+@org_access_required
+@team_required
+def index(user, team):
+    kwargs = {
+        "user": user,
+        "team": team,
+    }
 
     return render_template("index.html", kwargs=kwargs)
 
 @current_app.route("/fetchPRs", methods=['GET'])
-def fetchPRs():
-    if session.get("token", None) is None:
-        return redirect(url_for("login"))
-    
+@authorization_required
+@org_access_required
+@team_required
+def fetchPRs(user, team):
     team   = request.args.get("team")
     state  = request.args.get("state")
     search = request.args.get("search")
@@ -58,9 +56,8 @@ def fetchPRs():
     resp = sorted(resp, key=lambda x: x['created_at'], reverse=True)
     return jsonify(resp)
 
-
-@current_app.route("/login", methods=["GET"])
-def login():
+@current_app.route("/login/oauth", methods=["GET"])
+def oauth():
     if session.get("token", None):
         flash("Authorizated.", "success")
         return redirect(url_for("index"))
@@ -70,45 +67,54 @@ def login():
 @current_app.route("/login/authorized", methods=["GET"])
 @github.authorized_handler
 def authorized(access_token):
-    next_url = request.args.get("next") or url_for("index")
     if access_token is None:
         flash("Authorization failed.", "danger")
-
     else:
         session["token"] = access_token
         flash("Authorizated.", "success")
 
+    next_url = request.args.get("next") or url_for("index")
     return redirect(next_url)
 
+# WIP function
 @current_app.route("/logout", methods=["GET"])
 def logout():
-    token = session.get("token", None)
-    if token is None:
-        return redirect(url_for("login"))
-
-    github.logout(token)
-    res = make_response(redirect(url_for("index")))
-    session.pop("token")
-    res.set_cookie(key='session', value='', expires=0)
+    # github.logout(token)
+    # res = make_response(redirect(url_for("index")))
+    # session.pop("token")
+    # res.set_cookie(key='session', value='', expires=0)
     # github.delete_an_app_authorization(token)
-    return res
+    return "WIP"
 
-@current_app.route("/joinTeam/<team>", methods=["GET"])
-def joinTeam(team):
-    if session.get("token", None) is None:
-        return redirect(url_for("login"))
+@current_app.route("/orgAccessError", methods=["GET"])
+@authorization_required
+def orgAccessError():
+    return render_template("orgAccessError.html")
 
-    TeamMember.add(team, github.current_user())
+@current_app.route("/joinTeam", methods=["GET"])
+@authorization_required
+@org_access_required
+def joinTeam(user):
+    kwargs = {
+        "user": user,
+    }
 
-    flash(f"Joined {team}.", "success")
-
-    return redirect(url_for("index"))
+    team = request.args.get("team")
+    if not team:
+        return render_template("joinTeam.html", kwargs=kwargs)
+    
+    if TeamMember.add(team, user):
+        session["team"] = team
+        flash(f"Joined {team}.", "success")
+        return redirect(url_for("index"))
+    flash(f"Failed to join {team}, please try again.", "danger")
+    return redirect(url_for("joinTeam"))
 
 @current_app.route("/uploadFile", methods=["GET", "POST"])
-def uploadFile():
-    if session.get("token", None) is None:
-        return redirect(url_for("login"))
-
+@authorization_required
+@org_access_required
+@team_required
+def uploadFile(user, team):
     if TeamMember.getTeamMembers(github.current_user()) is None:
         flash("You have not join any team yet.", "warning")
         redirect(url_for("index"))
@@ -122,26 +128,22 @@ def uploadFile():
 
             return redirect(url_for("newPullRequest"))
 
-    kwargs = defaultdict(list)
-    kwargs["user"] = github.current_user()
-    team_members = TeamMember.getTeamMembers(kwargs.get("user"))
-    if team_members: kwargs["team"] = team_members.team
+    kwargs = {
+        "user": user,
+        "team": team,
+    }
 
     return render_template("uploadFile.html", kwargs=kwargs)
 
 @current_app.route("/newPullRequest", methods=["GET", "POST"])
-def newPullRequest():
-    if session.get("token", None) is None:
-        return redirect(url_for("login"))
-
-    if TeamMember.getTeamMembers(github.current_user()) is None:
-        flash("You have not join any team yet.", "warning")
-        redirect(url_for("index"))
-
-    kwargs = defaultdict(list)
-    kwargs["user"] = github.current_user()
-    team_members = TeamMember.getTeamMembers(kwargs.get("user"))
-    if team_members: kwargs["team"] = team_members.team
+@authorization_required
+@org_access_required
+@team_required
+def newPullRequest(user, team):
+    kwargs = {
+        "user": user,
+        "team": team,
+    }
 
     if request.method == "POST":
         base = request.form.get('base')
@@ -231,26 +233,19 @@ def newPullRequest():
     return render_template("newPullRequest.html", kwargs=kwargs)
 
 @current_app.route("/changeLogs", methods=["GET"])
-def changeLogs():
-    if session.get("token", None) is None:
-        return redirect(url_for("login"))
-
-    kwargs = defaultdict(list)
-    kwargs["user"] = github.current_user()
-    team_members = TeamMember.getTeamMembers(kwargs.get("user"))
-    if team_members: kwargs["team"] = team_members.team
-
+@authorization_required
+@org_access_required
+def changeLogs(user):
+    kwargs = {
+        "user": user,
+    }
     return render_template("changeLogs.html", kwargs=kwargs)
 
 @current_app.route("/help", methods=["GET"])
-def help():
-    if session.get("token", None) is None:
-        return redirect(url_for("login"))
-
-    kwargs = defaultdict(list)
-    kwargs["user"] = github.current_user()
-    team_members = TeamMember.getTeamMembers(kwargs.get("user"))
-    if team_members: kwargs["team"] = team_members.team
-
+@authorization_required
+@org_access_required
+def help(user):
+    kwargs = {
+        "user": user,
+    }
     return render_template("help.html", kwargs=kwargs)
-    
