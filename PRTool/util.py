@@ -36,13 +36,13 @@ def org_access_required(func):
 def team_required(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        from models import TeamMember
-
         if session.get("team", None):
             return func(*args, team=session.get("team"), **kwargs)
-
+        
+        from models import TeamMember
         user = TeamMember.getTeamMembers(github.current_user())
         if user and user.team:
+            session["team"] = user.team
             return func(*args, team=user.team, **kwargs)
 
         return redirect(url_for("joinTeam"))

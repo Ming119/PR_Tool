@@ -1,5 +1,6 @@
 import base64
 import threading
+import config
 from flask import current_app, request, session, flash, render_template, redirect, url_for, make_response, jsonify, copy_current_request_context
 from util import github, authorization_required, org_access_required, team_required
 
@@ -256,6 +257,7 @@ def newPullRequest(user, team):
 def changeLogs(user):
     kwargs = {
         "user": user,
+        "team": session.get("team", ""),
     }
     return render_template("changeLogs.html", kwargs=kwargs)
 
@@ -265,5 +267,6 @@ def changeLogs(user):
 def help(user):
     kwargs = {
         "user": user,
+        "team": session.get("team", ""),
     }
     return render_template("help.html", kwargs=kwargs)

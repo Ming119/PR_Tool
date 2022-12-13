@@ -47,7 +47,7 @@
       </div>
 
       <div>
-        Login as {{ kwargs.get('user', None) }} ({{ kwargs.get('team', '') }})
+        Login as {{ kwargs.get('user', None) }} ({{ 'Capstone 1' if kwargs.get('team') == 'capstone1' else 'Capstone 2' if kwargs.get('team') == 'capstone2' else kwargs.get('team', '') }})
         <!-- <a type="button" class="btn btn-warning mx-3" href="{{ url_for('logout') }}">Logoff</a> -->
         <!-- Logoff function will not be work -->
       </div>
