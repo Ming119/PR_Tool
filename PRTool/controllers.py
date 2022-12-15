@@ -15,7 +15,6 @@ def index(user, team):
         "user": user,
         "team": team,
     }
-
     return render_template("index.html", kwargs=kwargs)
 
 @current_app.route("/fetchPRs", methods=['GET'])
@@ -80,7 +79,6 @@ def oauth():
     if session.get("token", None):
         flash("Authorizated.", "success")
         return redirect(url_for("index"))
-
     return github.authorize(scope="repo")
 
 @current_app.route("/login/authorized", methods=["GET"])
@@ -91,9 +89,7 @@ def authorized(access_token):
     else:
         session["token"] = access_token
         flash("Authorizated.", "success")
-
-    next_url = request.args.get("next") or url_for("index")
-    return redirect(next_url)
+    return redirect(request.args.get("next") or url_for("index"))
 
 # WIP function
 @current_app.route("/logout", methods=["GET"])
@@ -114,19 +110,16 @@ def orgAccessError():
 @authorization_required
 @org_access_required
 def joinTeam(user):
-    kwargs = {
-        "user": user,
-    }
-
     team = request.args.get("team")
-    if not team:
-        return render_template("joinTeam.html", kwargs=kwargs)
-    
-    if TeamMember.add(team, user):
+   
+    if team and TeamMember.add(team, user):
         session["team"] = team
         flash(f"Joined {team}.", "success")
         return redirect(url_for("index"))
-    flash(f"Failed to join {team}, please try again.", "danger")
+    
+    if team:
+        flash(f"Failed to join {team}, please try again.", "danger")
+
     return redirect(url_for("joinTeam"))
 
 @current_app.route("/uploadFile", methods=["GET", "POST"])
@@ -134,10 +127,6 @@ def joinTeam(user):
 @org_access_required
 @team_required
 def uploadFile(user, team):
-    if TeamMember.getTeamMembers(github.current_user()) is None:
-        flash("You have not join any team yet.", "warning")
-        redirect(url_for("index"))
-
     # FIXME: 500 error if branch is not exist
     if request.method == "POST":
         file = request.files["file"]
@@ -240,14 +229,9 @@ def newPullRequest(user, team):
     teamAssignees = TeamAssignee.getTeamAssignees(kwargs.get("team"))
     teamLabels    = TeamLabel.getTeamLabels(kwargs.get("team"))
 
-    for teamReviewer in teamReviewers:
-        kwargs["reviewers"].append(teamReviewer.reviewer)
-
-    for teamAssignee in teamAssignees:
-        kwargs["assignees"].append(teamAssignee.assignee)
-
-    for teamLabel in teamLabels:
-        kwargs["labels"].append(teamLabel.label)
+    kwargs["reviewers"] = [teamReviewer.reviewer for teamReviewer in teamReviewers]
+    kwargs["assignees"] = [teamAssignee.assignee for teamAssignee in teamAssignees]
+    kwargs["labels"]    = [teamLabel.label       for teamLabel    in teamLabels   ]
 
     return render_template("newPullRequest.html", kwargs=kwargs)
 
