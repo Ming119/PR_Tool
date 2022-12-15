@@ -3,8 +3,12 @@
 {% block title %}Pull Resquests Tool{% endblock %}
 
 {% block main %}
+<a href={{ url_for('index') }} type="button" class="btn btn-outline-success my-3">
+    <i class="bi bi-box-arrow-in-left"></i> Back to Home Page
+</a>
+
 <form id="fileUploadForm" action="uploadFile" method="POST" enctype="multipart/form-data">
-    <div id="drop-zone" class="card my-5" style="height: 75vh;">
+    <div id="drop-zone" class="card mb-5" style="height: 75vh;">
         <div class="card-body text-center d-flex justify-content-center align-items-center">
             <div id='load' class='three-body d-none'><div class='three-body__dot'></div><div class='three-body__dot'></div><div class='three-body__dot'></div></div>
             <div id='noteText'>
