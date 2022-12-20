@@ -1,7 +1,6 @@
 import base64
 import threading
-import config
-from flask import current_app, request, session, flash, render_template, redirect, url_for, make_response, jsonify, copy_current_request_context
+from flask import current_app, request, session, flash, render_template, redirect, url_for, jsonify, copy_current_request_context
 from util import github, authorization_required, org_access_required, team_required
 
 from models import TeamMember, TeamAssignee, TeamLabel, TeamReviewer
@@ -169,29 +168,29 @@ def newPullRequest(user, team):
         TeamAssignee.add(kwargs["team"], assignees)
         TeamLabel.add(kwargs["team"], lables)
 
-        # res = github.create_a_pull_request(base=base, head=head, title=title, body=body)
+        res = github.create_a_pull_request(base=base, head=head, title=title, body=body)
         
-        # @copy_current_request_context
-        # def job_request_reviewers_for_a_pull_request(reviewers):
-        #     github.request_reviewers_for_a_pull_request(pull_number=res["number"], reviewers=reviewers)
+        @copy_current_request_context
+        def job_request_reviewers_for_a_pull_request(reviewers):
+            github.request_reviewers_for_a_pull_request(pull_number=res["number"], reviewers=reviewers)
         
-        # @copy_current_request_context
-        # def add_assignees_to_an_issue(assignees):
-        #     github.add_assignees_to_an_issue(issue_number=res["number"], assignees=assignees)
+        @copy_current_request_context
+        def add_assignees_to_an_issue(assignees):
+            github.add_assignees_to_an_issue(issue_number=res["number"], assignees=assignees)
         
-        # @copy_current_request_context
-        # def add_labels_to_an_issue(lables):
-        #     github.add_labels_to_an_issue(issue_number=res["number"], labels=lables)
+        @copy_current_request_context
+        def add_labels_to_an_issue(lables):
+            github.add_labels_to_an_issue(issue_number=res["number"], labels=lables)
 
-        # threads = [threading.Thread(target=job_request_reviewers_for_a_pull_request, args=(reviewers,)),
-        #            threading.Thread(target=add_assignees_to_an_issue, args=(assignees,)),
-        #            threading.Thread(target=add_labels_to_an_issue, args=(lables,))]
+        threads = [threading.Thread(target=job_request_reviewers_for_a_pull_request, args=(reviewers,)),
+                   threading.Thread(target=add_assignees_to_an_issue, args=(assignees,)),
+                   threading.Thread(target=add_labels_to_an_issue, args=(lables,))]
         
-        # for thread in threads:
-        #     thread.start()
+        for thread in threads:
+            thread.start()
         
-        # for thread in threads:
-        #     thread.join()
+        for thread in threads:
+            thread.join()
 
         return redirect(url_for("index"))
 
