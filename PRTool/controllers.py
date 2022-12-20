@@ -1,6 +1,6 @@
 import base64
 import threading
-from flask import current_app, request, session, flash, render_template, redirect, url_for, make_response, jsonify, copy_current_request_context
+from flask import current_app, request, session, flash, render_template, redirect, url_for, jsonify, copy_current_request_context
 from util import github, authorization_required, org_access_required, team_required
 
 from models import TeamMember, TeamAssignee, TeamLabel, TeamReviewer
@@ -14,7 +14,6 @@ def index(user, team):
         "user": user,
         "team": team,
     }
-
     return render_template("index.html", kwargs=kwargs)
 
 @current_app.route("/fetchPRs", methods=['GET'])
@@ -24,26 +23,44 @@ def index(user, team):
 def fetchPRs(user, team):
     team   = request.args.get("team")
     state  = request.args.get("state")
-    search = request.args.get("search")
-
-    if ('Capstone' in team):
-        team = team[0:-1] + " " + team[-1]
     
     team_members = TeamMember.getTeamMembers(team=team)
-    if not team_members: return jsonify({'total_count': 0})
+    if not team_members: return jsonify([])
     team_members_list = [team_member.user for team_member in team_members]
     
-    issues = github.list_pull_requests(team_members_list, state, search=search)
+    issues = github.list_pull_requests(team_members_list, state)
 
     if (state == 'closed'):
-        resp = sorted(issues['items'], key=lambda x: x['closed_at'], reverse=True)
+        resp = [{
+            'number': f"#{pr['number']}",
+            'title': pr['title'],
+            'date': pr['closed_at'][:10],
+            'author': pr['user']['login'],
+            'labels': [{
+                'name': label['name'],
+                'color': label['color']
+            } for label in pr['labels']],
+            'url': pr['html_url'],
+        } for pr in issues['items']]
         return jsonify(resp)
     
     issues_number = [issue['number'] for issue in issues['items']]
     
     @copy_current_request_context
     def job(issue_num):
-        resp.append(github.get_a_pull_request(issue_num))
+        res = github.get_a_pull_request(issue_num)
+        resp.append({
+            'number': f"#{res['number']}",
+            'title': res['title'],
+            'date': res['created_at'][:10],
+            'labels': [{
+                'name': label['name'],
+                'color': label['color']
+            } for label in res['labels']],
+            'author': res['user']['login'],
+            'base_on': res['base']['ref'],
+            'url': res['html_url'],
+        })
 
     resp = []
     threads = [threading.Thread(target=job, args=(issue_number,)) for issue_number in issues_number]
@@ -53,7 +70,6 @@ def fetchPRs(user, team):
     for thread in threads:
         thread.join()
 
-    resp = sorted(resp, key=lambda x: x['created_at'], reverse=True)
     return jsonify(resp)
 
 @current_app.route("/login/oauth", methods=["GET"])
@@ -61,7 +77,6 @@ def oauth():
     if session.get("token", None):
         flash("Authorizated.", "success")
         return redirect(url_for("index"))
-
     return github.authorize(scope="repo")
 
 @current_app.route("/login/authorized", methods=["GET"])
@@ -72,9 +87,7 @@ def authorized(access_token):
     else:
         session["token"] = access_token
         flash("Authorizated.", "success")
-
-    next_url = request.args.get("next") or url_for("index")
-    return redirect(next_url)
+    return redirect(request.args.get("next") or url_for("index"))
 
 # WIP function
 @current_app.route("/logout", methods=["GET"])
@@ -95,19 +108,16 @@ def orgAccessError():
 @authorization_required
 @org_access_required
 def joinTeam(user):
-    kwargs = {
-        "user": user,
-    }
-
     team = request.args.get("team")
-    if not team:
-        return render_template("joinTeam.html", kwargs=kwargs)
-    
-    if TeamMember.add(team, user):
+   
+    if team and TeamMember.add(team, user):
         session["team"] = team
         flash(f"Joined {team}.", "success")
         return redirect(url_for("index"))
-    flash(f"Failed to join {team}, please try again.", "danger")
+    
+    if team:
+        flash(f"Failed to join {team}, please try again.", "danger")
+
     return redirect(url_for("joinTeam"))
 
 @current_app.route("/uploadFile", methods=["GET", "POST"])
@@ -115,10 +125,6 @@ def joinTeam(user):
 @org_access_required
 @team_required
 def uploadFile(user, team):
-    if TeamMember.getTeamMembers(github.current_user()) is None:
-        flash("You have not join any team yet.", "warning")
-        redirect(url_for("index"))
-
     # FIXME: 500 error if branch is not exist
     if request.method == "POST":
         file = request.files["file"]
@@ -190,19 +196,19 @@ def newPullRequest(user, team):
 
     template = github.get_repository_content("pull_request_template.md")
 
+    kwargs["branches"] = []
+    kwargs["members"] = []
     page = 1
     while True:
         branches = github.list_branches(per_page=100, page=page)
-        for branch in branches:
-            kwargs["branches"].append(branch)
+        kwargs["branches"].extend(branches)
         if len(branches) < 100: break
         page += 1
 
     page = 1
     while True:
         members = github.list_organization_members(per_page=100, page=page)
-        for member in members:
-            kwargs["members"].append(member)
+        kwargs["members"].extend(members)
         if len(members) < 100: break
         page += 1
     
@@ -221,14 +227,9 @@ def newPullRequest(user, team):
     teamAssignees = TeamAssignee.getTeamAssignees(kwargs.get("team"))
     teamLabels    = TeamLabel.getTeamLabels(kwargs.get("team"))
 
-    for teamReviewer in teamReviewers:
-        kwargs["reviewers"].append(teamReviewer.reviewer)
-
-    for teamAssignee in teamAssignees:
-        kwargs["assignees"].append(teamAssignee.assignee)
-
-    for teamLabel in teamLabels:
-        kwargs["labels"].append(teamLabel.label)
+    kwargs["reviewers"] = [teamReviewer.reviewer for teamReviewer in teamReviewers]
+    kwargs["assignees"] = [teamAssignee.assignee for teamAssignee in teamAssignees]
+    kwargs["labels"]    = [teamLabel.label       for teamLabel    in teamLabels   ]
 
     return render_template("newPullRequest.html", kwargs=kwargs)
 
@@ -238,6 +239,7 @@ def newPullRequest(user, team):
 def changeLogs(user):
     kwargs = {
         "user": user,
+        "team": session.get("team", ""),
     }
     return render_template("changeLogs.html", kwargs=kwargs)
 
@@ -247,5 +249,6 @@ def changeLogs(user):
 def help(user):
     kwargs = {
         "user": user,
+        "team": session.get("team", ""),
     }
     return render_template("help.html", kwargs=kwargs)

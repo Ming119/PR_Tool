@@ -1,197 +1,149 @@
 {% extends "base.html" %}
 
-{% block title %}Pull Resquests Tool{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.21.0/dist/bootstrap-table.min.css">
+{% endblock %}
 
 {% block main %}
-<div class="container">
-    <div class="row my-3">
-        <div class="col-md-9">
-            <div class="input-group">
-                <input id='search_pr' class="form-control" type="search" placeholder="Search">
-                <button id='search_pr_btn' class="input-group-text btn btn-outline-success">
-                    <i class="bi bi-search"></i>
-                </button>
-            </div>
-        </div>
-        <div class="col-md-3 d-flex justify-content-center">
-            <div>
-                <a href="{{ url_for('uploadFile') }}" class="btn btn-success" role="btn">New Pull Request</a>
-            </div>
-        </div>
-    </div>
+<div class="container my-3">
+	<div class="toolbar">
+		<div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+			<input type="radio" class="btn-check" name="btnradio" id="dcTrack" autocomplete="off">
+			<label class="btn btn-outline-primary" for="dcTrack">dcTrack</label>
 
-    <nav class="nav nav-tabs nav-fill" id="teamTabs">
-        <button class="nav-link" id="dcTrack-tab" data-bs-toggle="tab" data-bs-target="#dcTrack-content"
-            aria-controls="dcTrack-content">dcTrack</button>
-        <button class="nav-link" id="Capstone1-tab" data-bs-toggle="tab" data-bs-target="#Capstone1-content"
-            aria-controls="Capstone1-content">Capstone 1</button>
-        <button class="nav-link" id="Capstone2-tab" data-bs-toggle="tab" data-bs-target="#Capstone2-content"
-            aria-controls="Capstone2-content">Capstone 2</button>
-    </nav>
+			<input type="radio" class="btn-check" name="btnradio" id="capstone1" autocomplete="off">
+			<label class="btn btn-outline-primary" for="capstone1">Capstone 1</label>
 
-    <div class="tab-content mb-5">
-        <div class="tab-pane fade" id="dcTrack-content" role="tabpanel" aria-labelledby="dcTrack-tab" tabindex="0">
-            <nav class="nav nav-tabs nav-fill">
-                <button class="stateTabs nav-link active" id="dcTrack-open" data-bs-toggle="tab" data-bs-target="#dcTrackopen"
-                    aria-controls="dcTrack-open">Open</button>
-                <button class="stateTabs nav-link" id="dcTrack-closed" data-bs-toggle="tab" data-bs-target="#dcTrackclosed"
-                    aria-controls="dcTrack-closed">Closed</button>
-            </nav>
+			<input type="radio" class="btn-check" name="btnradio" id="capstone2" autocomplete="off">
+			<label class="btn btn-outline-primary" for="capstone2">Capstone 2</label>
+		</div>
+	</div>
 
-            <div class="tab-content">
-                <div class="tab-pane fade active show" id="dcTrackopen" role="tabpanel" aria-labelledby="dcTrack-open"
-                    tabindex="0">
-                </div>
-                <div class="tab-pane fade" id="dcTrackclosed" role="tabpanel" aria-labelledby="dcTrack-closed"
-                    tabindex="1">
-                </div>
-            </div>
-        </div>
-
-        <div class="tab-pane fade" id="Capstone1-content" role="tabpanel" aria-labelledby="Capstone1-tab" tabindex="1">
-            <nav class="nav nav-tabs nav-fill" role="tablist">
-                <button class="stateTabs nav-link active" id="Capstone1-open" data-bs-toggle="tab" data-bs-target="#Capstone1open"
-                    aria-controls="Capstone1-open">Open</button>
-                <button class="stateTabs nav-link" id="Capstone1-closed" data-bs-toggle="tab" data-bs-target="#Capstone1closed"
-                    aria-controls="Capstone1-closed">Closed</button>
-            </nav>
-
-            <div class="tab-content">
-                <div class="tab-pane fade active show" id="Capstone1open" role="tabpanel"
-                    aria-labelledby="Capstone1-open" tabindex="0">
-                </div>
-                <div class="tab-pane fade" id="Capstone1closed" role="tabpanel" aria-labelledby="Capstone1-closed"
-                    tabindex="1">
-                </div>
-            </div>
-        </div>
-
-        <div class="tab-pane fade" id="Capstone2-content" role="tabpanel" aria-labelledby="Capstone2-tab" tabindex="2">
-            <nav class="nav nav-tabs nav-fill" role="tablist">
-                <button class="stateTabs nav-link active" id="Capstone2-open" data-bs-toggle="tab" data-bs-target="#Capstone2open"
-                    aria-controls="Capstone2-open">Open</button>
-                <button class="stateTabs nav-link" id="Capstone2-closed" data-bs-toggle="tab" data-bs-target="#Capstone2closed"
-                    aria-controls="Capstone2-closed">Closed</button>
-            </nav>
-
-            <div class="tab-content">
-                <div class="tab-pane fade active show" id="Capstone2open" role="tabpanel"
-                    aria-labelledby="Capstone2-open" tabindex="0">
-                </div>
-                <div class="tab-pane fade" id="Capstone2closed" role="tabpanel" aria-labelledby="Capstone2-closed"
-                    tabindex="1">
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="mb-5">
+		<table id="PRsTable">
+			<thead>
+				<tr>
+					<th data-field="number" data-sortable="true" data-formatter="numberFormatter">#</th>
+					<th data-field="title" data-sortable="true">Title</th>
+					<th data-field="labels" data-sortable="true" data-formatter="labelsFormatter">Labels</th>
+					<th data-field="author" data-sortable="true">Author</th>
+					<th data-field="date" data-sortable="true">Date</th>
+					<th data-field="base_on" data-sortable="true" data-footer-formatter="footerFormatter">Base on</th>
+				</tr>
+			</thead>
+			<tfoot>
+				<td colspan="5">Total</td>
+				<td></td>
+			</tfoot>
+		</table>
+	</div>
 </div>
 {% endblock %}
 
 {% block script %}
+<script src="https://unpkg.com/bootstrap-table@1.21.0/dist/bootstrap-table.min.js"></script>
+
 <script>
-    let currentTeam = 'dcTrack';
-    let currentTab = 'dcTrack';
-    let currentState = 'open';
-    let currentSearch = '';
+	const $prsTable = $("#PRsTable");
 
-    function updatePRList(team, state, value) {
-        if (value === undefined) value = '';
+	var team = "{{ kwargs.get('team') }}";
+	var currentTeam = team ? team : 'dcTrack';
+	var currentState = 'open';
 
-        const content = document.getElementById(team + state);
-        content.innerHTML =
-            `<div class="d-flex justify-content-center my-5"><div class="dot-pulse"><div class="dot-pulse__dot"></div></div></div>`;
+	$('#dcTrack').click(() => {
+		currentTeam = 'dcTrack';
+		updateTable();
+	});
 
-        fetch(`/fetchPRs?team=${team}&state=${state}&search=${value}`)
-            .then((res) => {
-                if (res.status === 200) return res.json();
-            }).then((prs) => {
-                if (prs.length === 0 || prs.total_count === 0) {
-                    content.innerHTML =
-                        `<div class="d-flex justify-content-center my-5">
-                            <div class="alert alert-danger" role="alert">
-                                No PRs found.
-                            </div>
-                        </div>`;
-                    return;
-                }
+	$('#capstone1').click(() => {
+		currentTeam = 'capstone1';
+		updateTable();
+	});
 
-                var html = `<ul class="list-group list-group-flush">`;
+	$('#capstone2').click(() => {
+		currentTeam = 'capstone2';
+		updateTable();
+	});
 
-                for (var i = 0; i < prs.length; ++i) {
-                    html +=
-                        `<a class="text-decoration-none" href="${ prs[i].html_url }" target="_blank"><li class="list-group-item">`;
+	const updateTable = async () => {
+		$prsTable.bootstrapTable('showLoading');
 
-                    if (prs[i].state === 'open')
-                        html +=
-                        `<svg style="filter: invert(54%) sepia(76%) saturate(387%) hue-rotate(77deg) brightness(96%) contrast(95%); viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.177 3.073L9.573.677A.25.25 0 0110 .854v4.792a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25zM11 2.5h-1V4h1a1 1 0 011 1v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5zm1 10.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM3.75 12a.75.75 0 100 1.5.75.75 0 000-1.5z"></path></svg>`;
-                    else
-                        html +=
-                        `<svg style="filter: invert(42%) sepia(100%) saturate(421%) hue-rotate(218deg) brightness(103%) contrast(94%);"viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd"d="M5 3.254V3.25v.005a.75.75 0 110-.005v.004zm.45 1.9a2.25 2.25 0 10-1.95.218v5.256a2.25 2.25 0 101.5 0V7.123A5.735 5.735 0 009.25 9h1.378a2.251 2.251 0 100-1.5H9.25a4.25 4.25 0 01-3.8-2.346zM12.75 9a.75.75 0 100-1.5.75.75 0 000 1.5zm-8.5 4.5a.75.75 0 100-1.5.75.75 0 000 1.5z"></path></svg>`;
+		const res = await fetch(`/fetchPRs?team=${currentTeam}&state=${currentState}`);
+		const data = await res.json();
 
-                    html += `${ prs[i].title }`
+		$prsTable.bootstrapTable('load', data);
 
-                    for (var j = 0; j < prs[i].labels.length; ++j)
-                        html +=
-                        `<span class="badge rounded-pill" style="background-color:#${prs[i].labels[j].color}">${ prs[i].labels[j].name }</span>`;
+		$prsTable.bootstrapTable('hideLoading');
+	}
 
-                    if (prs[i].state === 'open')
-                        html +=
-                        `<br /><span>#${ prs[i].number } base on ${prs[i].base.ref} is ${ prs[i].state } by ${ prs[i].user.login } at ${ prs[i].created_at.slice(0, 10) }</span></li></a>`;
-                    else
-                        html +=
-                        `<br /><span>#${ prs[i].number } by ${ prs[i].user.login } ${ prs[i].state } at ${ prs[i].closed_at.slice(0, 10) }</span></li></a>`;
-                }
-                html += `</ul>`;
-                content.innerHTML = html;
-            });
-    }
+	function numberFormatter(value, row) {
+		return `<a href="${row.url}" target="_blank">${value}</a>`;
+	}
 
-    let teamTabs = document.getElementById("teamTabs").getElementsByTagName("button");
-    for (let i = 0; i < teamTabs.length; ++i) {
-        teamTabs[i].addEventListener("click", e => {
-            currentTeam  = e.target.innerHTML;
-            currentTab   = e.target.id.split('-')[0];
-            currentState = document.getElementById(currentTab + '-content').getElementsByClassName('active')[0].id.split('-')[1];
-            updatePRList(currentTab, currentState, currentSearch);
-        });
-    }
+	function labelsFormatter(value, row) {
+		return value.map(label =>
+			`<span class="badge rounded-pill" style="background-color:#${label.color}">${label.name}</span>`).join(
+			' ');
+	}
 
-    let stateTabs = document.getElementsByClassName("stateTabs");
-    for (let i = 0; i < stateTabs.length; ++i) {
-        stateTabs[i].addEventListener("click", e => {
-            currentState = e.target.id.split('-')[1];
-            updatePRList(currentTab, currentState, currentSearch);
-        });
-    }
+	function footerFormatter(data) {
+		return data.length;
+	}
 
-    let searchBar = document.getElementById('search_pr');
-    searchBar.addEventListener('input', e => currentSearch = e.target.value);
-    searchBar.addEventListener('keypress', (e) => {
-        if (e.keyCode === 13) {
-            currentSearch = e.target.value;
-            updatePRList(currentTab, currentState, currentSearch);
-        }
-    });
+	function tableButtons() {
+		buttons = {
+			togglePR: {
+				text: 'Toggle',
+				icon: 'bi bi-toggle-on',
+				attributes: {
+					title: 'Toggle between open and closed pull requests'
+				},
+				event: () => {
+					currentState = currentState === 'open' ? 'closed' : 'open';
+					$('button[name*="togglePR"]').children().toggleClass('bi-toggle-off bi-toggle-on');
+					updateTable();
+				},
+			},
+		}
 
-    let searchBtn = document.getElementById('search_pr_btn');
-    searchBtn.addEventListener('click', e => {
-        currentSearch = searchBar.value;
-        updatePRList(currentTab, currentState, currentSearch);
-    });
+		if (team) {
+			buttons.newPR = {
+				text: 'New Pull Request',
+				icon: 'bi bi-plus',
+				attributes: {
+					title: 'Create a new pull request'
+				},
+				event: () => {
+					window.location.href = team ? '/uploadFile' : '';
+				},
+			}
+		} else {
+			buttons.joinTeam = {
 
-    window.onload = () => {
-        currentTeam = "{{ kwargs.get('team', 'dcTrack') }}";
-        currentState = 'open';
-        currentSearch = '';
+			}
+		}
 
-        currentTab = currentTeam.replace(' ', '');
+		return buttons;
+	}
 
-        document.getElementById(currentTab + '-tab').classList.add('active');
-        document.getElementById(currentTab + '-content').classList.add('active', 'show');
+	window.onload = () => {
+		$prsTable.bootstrapTable({
+			search: true,
+			sortReset: true,
+			showFooter: true,
+			toolbar: '.toolbar',
+			buttons: 'tableButtons',
+		})
 
-        updatePRList(currentTab, currentState, currentSearch);
-    }
+		if (currentTeam === 'dcTrack') {
+			$('#dcTrack').attr('checked', true);
+		} else if (currentTeam === 'capstone1') {
+			$('#capstone1').attr('checked', true);
+		} else if (currentTeam === 'capstone2') {
+			$('#capstone2').attr('checked', true);
+		}
+
+		updateTable();
+	}
 </script>
-
-
 {% endblock %}

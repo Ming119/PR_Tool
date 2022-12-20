@@ -1,26 +1,25 @@
 {% extends "base.html" %}
 
-{% block title %}Pull Resquests Tool{% endblock %}
-
 {% block main %}
 <div class="container">
-    <div class="row justify-content-center align-items-center" style="height: 75vh;">
-        <div class="col-6">
-            <div class="card">
-                <div class="card-header"><h1>Join a team</h1></div>
-                <div class="card-body ">
-                    <p class="card-text d-flex justify-content-center">
-                        It looks like you are new here.<br/>
-                        Please select your team.<br/>
-                    </p>
-                    <div class="btn-group d-flex justify-content-center" role="group">
-                        <a href="/joinTeam?team=dcTrack" class="btn btn-outline-primary">dcTrack</a>
-                        <a href="/joinTeam?team=capstone1" class="btn btn-outline-primary">Capstone 1</a>
-                        <a href="/joinTeam?team=capstone2" class="btn btn-outline-primary">Capstone 2</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="row justify-content-center align-items-center" style="height: 75vh;">
+		<div class="col-6">
+			<div class="card">
+				<div class="card-header">
+					<h1>Welcome to PR Tool</h1>
+				</div>
+				<div class="card-body">
+					<p class="card-text">
+						To get started, please select your team from the options provided.
+					</p>
+					<div class="btn-group d-flex justify-content-center" role="group">
+						<a href="/joinTeam?team=dcTrack" class="btn btn-outline-primary">dcTrack</a>
+						<a href="/joinTeam?team=capstone1" class="btn btn-outline-primary">Capstone 1</a>
+						<a href="/joinTeam?team=capstone2" class="btn btn-outline-primary">Capstone 2</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 {% endblock %}
