@@ -41,7 +41,6 @@ def fetchPRs(user, team):
                 'name': label['name'],
                 'color': label['color']
             } for label in pr['labels']],
-            'base_on': config.BRANCH,
             'url': pr['html_url'],
         } for pr in issues['items']]
         return jsonify(resp)
@@ -170,47 +169,47 @@ def newPullRequest(user, team):
         TeamAssignee.add(kwargs["team"], assignees)
         TeamLabel.add(kwargs["team"], lables)
 
-        res = github.create_a_pull_request(base=base, head=head, title=title, body=body)
+        # res = github.create_a_pull_request(base=base, head=head, title=title, body=body)
         
-        @copy_current_request_context
-        def job_request_reviewers_for_a_pull_request(reviewers):
-            github.request_reviewers_for_a_pull_request(pull_number=res["number"], reviewers=reviewers)
+        # @copy_current_request_context
+        # def job_request_reviewers_for_a_pull_request(reviewers):
+        #     github.request_reviewers_for_a_pull_request(pull_number=res["number"], reviewers=reviewers)
         
-        @copy_current_request_context
-        def add_assignees_to_an_issue(assignees):
-            github.add_assignees_to_an_issue(issue_number=res["number"], assignees=assignees)
+        # @copy_current_request_context
+        # def add_assignees_to_an_issue(assignees):
+        #     github.add_assignees_to_an_issue(issue_number=res["number"], assignees=assignees)
         
-        @copy_current_request_context
-        def add_labels_to_an_issue(lables):
-            github.add_labels_to_an_issue(issue_number=res["number"], labels=lables)
+        # @copy_current_request_context
+        # def add_labels_to_an_issue(lables):
+        #     github.add_labels_to_an_issue(issue_number=res["number"], labels=lables)
 
-        threads = [threading.Thread(target=job_request_reviewers_for_a_pull_request, args=(reviewers,)),
-                   threading.Thread(target=add_assignees_to_an_issue, args=(assignees,)),
-                   threading.Thread(target=add_labels_to_an_issue, args=(lables,))]
+        # threads = [threading.Thread(target=job_request_reviewers_for_a_pull_request, args=(reviewers,)),
+        #            threading.Thread(target=add_assignees_to_an_issue, args=(assignees,)),
+        #            threading.Thread(target=add_labels_to_an_issue, args=(lables,))]
         
-        for thread in threads:
-            thread.start()
+        # for thread in threads:
+        #     thread.start()
         
-        for thread in threads:
-            thread.join()
+        # for thread in threads:
+        #     thread.join()
 
         return redirect(url_for("index"))
 
     template = github.get_repository_content("pull_request_template.md")
 
+    kwargs["branches"] = []
+    kwargs["members"] = []
     page = 1
     while True:
         branches = github.list_branches(per_page=100, page=page)
-        for branch in branches:
-            kwargs["branches"].append(branch)
+        kwargs["branches"].extend(branches)
         if len(branches) < 100: break
         page += 1
 
     page = 1
     while True:
         members = github.list_organization_members(per_page=100, page=page)
-        for member in members:
-            kwargs["members"].append(member)
+        kwargs["members"].extend(members)
         if len(members) < 100: break
         page += 1
     
