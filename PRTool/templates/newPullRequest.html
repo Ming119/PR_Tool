@@ -1,169 +1,159 @@
 {% extends "base.html" %}
 
-{% block title %}Pull Resquests Tool{% endblock %}
-
 {% block main %}
 <h1 class="my-3">Open A Pull Request</h1>
 <form action="newPullRequest" method="POST">
-    <div class="border rounded bg-light d-flex justify-content-between my-3">
-        <div class="d-flex align-items-center">
-            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true"
-                class="m-3">
-                <path fill-rule="evenodd"
-                    d="M9.573.677L7.177 3.073a.25.25 0 000 .354l2.396 2.396A.25.25 0 0010 5.646V4h1a1 1 0 011 1v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5h-1V.854a.25.25 0 00-.427-.177zM6 12v-1.646a.25.25 0 01.427-.177l2.396 2.396a.25.25 0 010 .354l-2.396 2.396A.25.25 0 016 15.146V13.5H5A2.5 2.5 0 012.5 11V5.372a2.25 2.25 0 111.5 0V11a1 1 0 001 1h1zm6.75 0a.75.75 0 100 1.5.75.75 0 000-1.5zM4 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0z">
-                </path>
-            </svg>
+	<div class="border rounded bg-light d-flex justify-content-between my-3">
+		<div class="d-flex align-items-center">
+			<svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true"
+				class="m-3">
+				<path fill-rule="evenodd"
+					d="M9.573.677L7.177 3.073a.25.25 0 000 .354l2.396 2.396A.25.25 0 0010 5.646V4h1a1 1 0 011 1v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5h-1V.854a.25.25 0 00-.427-.177zM6 12v-1.646a.25.25 0 01.427-.177l2.396 2.396a.25.25 0 010 .354l-2.396 2.396A.25.25 0 016 15.146V13.5H5A2.5 2.5 0 012.5 11V5.372a2.25 2.25 0 111.5 0V11a1 1 0 001 1h1zm6.75 0a.75.75 0 100 1.5.75.75 0 000-1.5zM4 3.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0z">
+				</path>
+			</svg>
 
-            <div class="dropdown">
-                <input class="form-control" list="branches" id="branchesList" name="base" placeholder="base"
-                    required />
-                <datalist id="branches">
-                    {% for branch in kwargs.get('branches') %}
-                    <option value="{{ branch.name }}" />
-                    {% endfor %}
-                </datalist>
-            </div>
+			<div class="dropdown">
+				<input class="form-control" list="branches" id="branchesList" name="base" placeholder="base" required />
+				<datalist id="branches">
+					{% for branch in kwargs.get('branches') %}
+					<option value="{{ branch.name }}" />
+					{% endfor %}
+				</datalist>
+			</div>
 
-            <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true"
-                class="m-2">
-                <path fill-rule="evenodd"
-                    d="M7.78 12.53a.75.75 0 01-1.06 0L2.47 8.28a.75.75 0 010-1.06l4.25-4.25a.75.75 0 011.06 1.06L4.81 7h7.44a.75.75 0 010 1.5H4.81l2.97 2.97a.75.75 0 010 1.06z">
-                </path>
-            </svg>
+			<svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true"
+				class="m-2">
+				<path fill-rule="evenodd"
+					d="M7.78 12.53a.75.75 0 01-1.06 0L2.47 8.28a.75.75 0 010-1.06l4.25-4.25a.75.75 0 011.06 1.06L4.81 7h7.44a.75.75 0 010 1.5H4.81l2.97 2.97a.75.75 0 010 1.06z">
+				</path>
+			</svg>
 
-            <input class="btn btn-outline-secondary" value="{{ kwargs.get('title') }}" disabled />
+			<input class="btn btn-outline-secondary" value="{{ kwargs.get('title') }}" disabled />
 
-        </div>
-        <div class="d-flex align-items-center mx-3">
-            <button class="btn btn-success" type="submit">Create Pull Request</button>
-        </div>
-    </div>
+		</div>
+		<div class="d-flex align-items-center mx-3">
+			<button class="btn btn-success" type="submit">Create Pull Request</button>
+		</div>
+	</div>
 
-    <div class="row my-3">
-        <div class="col-9">
-            <div class="border rounded container mb-4">
-                <input type="text" class="form-control bg-light my-2" value="{{ kwargs.get('title') }}" name="title"
-                    required />
-                <nav class="nav nav-tabs">
-                    <button class="nav-link active" id="textareaWriteBtn" data-bs-toggle="tab" data-bs-target="#textareaWrite"
-                    aria-controls="textareaWrite">Write</button>
-                    <button class="nav-link" id="textareaPreviewBtn" data-bs-toggle="tab" data-bs-target="#textareaPreview"
-                    aria-controls="textareaPreview">Preview</button>
-                </nav>
-                <div class="tab-content">
-                    <textarea class="form-control bg-light mb-2 tab-pane fade active show" name="body" id="textareaWrite"
-                        style="height: 50vh;">{% autoescape false %}{{ kwargs.get('body') }}{% endautoescape %}</textarea>
-                    <div class="form-control bg-light mb-2 tab-pane fade" id="textareaPreview"></div>
-                </div>
-            </div>
+	<div class="row my-3">
+		<div class="col-9">
+			<div class="border rounded container mb-4">
+				<input type="text" class="form-control bg-light my-2" value="{{ kwargs.get('title') }}" name="title" required />
+				<nav class="nav nav-tabs">
+					<button class="nav-link active" id="textareaWriteBtn" data-bs-toggle="tab" data-bs-target="#textareaWrite"
+						aria-controls="textareaWrite">Write</button>
+					<button class="nav-link" id="textareaPreviewBtn" data-bs-toggle="tab" data-bs-target="#textareaPreview"
+						aria-controls="textareaPreview">Preview</button>
+				</nav>
+				<div class="tab-content">
+					<textarea class="form-control bg-light mb-2 tab-pane fade active show" name="body" id="textareaWrite"
+						style="height: 50vh;">{% autoescape false %}{{ kwargs.get('body') }}{% endautoescape %}</textarea>
+					<div class="form-control bg-light mb-2 tab-pane fade" id="textareaPreview"></div>
+				</div>
+			</div>
 
-        </div>
-        <div class="col-3">
-            <div id="reviewersDropdown">
-                <button class="btn dropdown-toggle" type="button" id="reviewersDropdownBtn" data-bs-toggle="dropdown"
-                    data-bs-auto-close="outside" aria-expanded="false">
-                    Reviewers
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="reviewersDropdownBtn">
-                    <li><input id="reviewersDropdownSearch" type="search" placeholder="Search"
-                            class="dropdown-item dropdown-search"></li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    {% for member in kwargs.get('members') %}
-                    <li class="reviewersOption">
-                        <div class="dropdown-item">
-                            <input type="checkbox" class="form-check-input" name="reviewers"
-                                value="{{ member.get('login') }}"
-                                {% if kwargs.get('reviewers') and member.get('login') in kwargs.get('reviewers') %}checked{% endif %} />
-                            <img class="img-fluid rounded-circle" style="width: 24px"
-                                src="{{ member.get('avatar_url') }}" />
-                            {{ member.get('login') }}
-                        </div>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-            <div class="my-2">
-                {% for member in kwargs.get('members') %}
-                <div class="reviewersList d-none">
-                    <img class="img-fluid rounded-circle" style="width: 24px" src="{{ member.get('avatar_url') }}" />
-                    {{ member.get('login') }}
-                </div>
-                {% endfor %}
-            </div>
+		</div>
+		<div class="col-3">
+			<div id="reviewersDropdown">
+				<button class="btn dropdown-toggle" type="button" id="reviewersDropdownBtn" data-bs-toggle="dropdown"
+					data-bs-auto-close="outside" aria-expanded="false">
+					Reviewers
+				</button>
+				<ul class="dropdown-menu" aria-labelledby="reviewersDropdownBtn">
+					<li><input id="reviewersDropdownSearch" type="search" placeholder="Search"
+							class="dropdown-item dropdown-search"></li>
+					<li>
+						<hr class="dropdown-divider" />
+					</li>
+					{% for member in kwargs.get('members') %}
+					<li class="reviewersOption">
+						<div class="dropdown-item">
+							<input type="checkbox" class="form-check-input" name="reviewers" value="{{ member.get('login') }}"
+								{% if kwargs.get('reviewers') and member.get('login') in kwargs.get('reviewers') %}checked{% endif %} />
+							<img class="img-fluid rounded-circle" style="width: 24px" src="{{ member.get('avatar_url') }}" />
+							{{ member.get('login') }}
+						</div>
+					</li>
+					{% endfor %}
+				</ul>
+			</div>
+			<div class="my-2">
+				{% for member in kwargs.get('members') %}
+				<div class="reviewersList d-none">
+					<img class="img-fluid rounded-circle" style="width: 24px" src="{{ member.get('avatar_url') }}" />
+					{{ member.get('login') }}
+				</div>
+				{% endfor %}
+			</div>
 
-            <hr />
-            <div id="assigneesDropdown">
-                <button class="btn dropdown-toggle" type="button" id="assigneesDropdownBtn" data-bs-toggle="dropdown"
-                    data-bs-auto-close="outside" aria-expanded="false">
-                    Assignees
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="assigneesDropdownBtn">
-                    <li><input id="assigneesDropdownSearch" type="search" placeholder="Search"
-                            class="dropdown-item dropdown-search"></li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    {% for member in kwargs.get('members') %}
-                    <li class="assigneesOption">
-                        <div class="dropdown-item">
-                            <input type="checkbox" class="form-check-input" name="assignees"
-                                value="{{ member.get('login') }}"
-                                {% if kwargs.get('assignees') and member.get('login') in kwargs.get('assignees') %}checked{% endif %} />
-                            <img class="img-fluid rounded-circle" style="width: 24px"
-                                src="{{ member.get('avatar_url') }}" />
-                            {{ member.get('login') }}
-                        </div>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-            <div class="my-2">
-                {% for member in kwargs.get('members') %}
-                <div class="assigneesList d-none">
-                    <img class="img-fluid rounded-circle" style="width: 24px" src="{{ member.get('avatar_url') }}" />
-                    {{ member.get('login') }}
-                </div>
-                {% endfor %}
+			<hr />
+			<div id="assigneesDropdown">
+				<button class="btn dropdown-toggle" type="button" id="assigneesDropdownBtn" data-bs-toggle="dropdown"
+					data-bs-auto-close="outside" aria-expanded="false">
+					Assignees
+				</button>
+				<ul class="dropdown-menu" aria-labelledby="assigneesDropdownBtn">
+					<li><input id="assigneesDropdownSearch" type="search" placeholder="Search"
+							class="dropdown-item dropdown-search"></li>
+					<li>
+						<hr class="dropdown-divider" />
+					</li>
+					{% for member in kwargs.get('members') %}
+					<li class="assigneesOption">
+						<div class="dropdown-item">
+							<input type="checkbox" class="form-check-input" name="assignees" value="{{ member.get('login') }}"
+								{% if kwargs.get('assignees') and member.get('login') in kwargs.get('assignees') %}checked{% endif %} />
+							<img class="img-fluid rounded-circle" style="width: 24px" src="{{ member.get('avatar_url') }}" />
+							{{ member.get('login') }}
+						</div>
+					</li>
+					{% endfor %}
+				</ul>
+			</div>
+			<div class="my-2">
+				{% for member in kwargs.get('members') %}
+				<div class="assigneesList d-none">
+					<img class="img-fluid rounded-circle" style="width: 24px" src="{{ member.get('avatar_url') }}" />
+					{{ member.get('login') }}
+				</div>
+				{% endfor %}
 
-            </div>
+			</div>
 
-            <hr />
-            <div id="labelsDropdown">
-                <button class="btn dropdown-toggle" type="button" id="labelsDropdownBtn" data-bs-toggle="dropdown"
-                    data-bs-auto-close="outside" aria-expanded="false">
-                    Labels
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="labelsDropdownBtn">
-                    <li><input id="labelsDropdownSearch" type="search" placeholder="Search"
-                            class="dropdown-item dropdown-search"></li>
-                    <li>
-                        <hr class="dropdown-divider" />
-                    </li>
-                    {% for label in kwargs.get('allLabels') %}
-                    <li class="labelsOption">
-                        <div class="dropdown-item">
-                            <input type="checkbox" class="form-check-input" name="labels"
-                                value="{{ label.get('name') }}"
-                                {% if kwargs.get('labels') and label.get('name') in kwargs.get('labels') %}checked{% endif %} />
-                            {{ label.get('name') }}
-                        </div>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-            <div class="my-2">
-                {% for label in kwargs.get('allLabels') %}
-                <div class="labelsList d-none">
-                    <span class="badge rounded-pill mx-3"
-                        style="background-color: #{{ label.color }};">{{ label.name }}</span>
-                </div>
+			<hr />
+			<div id="labelsDropdown">
+				<button class="btn dropdown-toggle" type="button" id="labelsDropdownBtn" data-bs-toggle="dropdown"
+					data-bs-auto-close="outside" aria-expanded="false">
+					Labels
+				</button>
+				<ul class="dropdown-menu" aria-labelledby="labelsDropdownBtn">
+					<li><input id="labelsDropdownSearch" type="search" placeholder="Search" class="dropdown-item dropdown-search">
+					</li>
+					<li>
+						<hr class="dropdown-divider" />
+					</li>
+					{% for label in kwargs.get('allLabels') %}
+					<li class="labelsOption">
+						<div class="dropdown-item">
+							<input type="checkbox" class="form-check-input" name="labels" value="{{ label.get('name') }}"
+								{% if kwargs.get('labels') and label.get('name') in kwargs.get('labels') %}checked{% endif %} />
+							{{ label.get('name') }}
+						</div>
+					</li>
+					{% endfor %}
+				</ul>
+			</div>
+			<div class="my-2">
+				{% for label in kwargs.get('allLabels') %}
+				<div class="labelsList d-none">
+					<span class="badge rounded-pill mx-3" style="background-color: #{{ label.color }};">{{ label.name }}</span>
+				</div>
 
-                {% endfor %}
-            </div>
-        </div>
-    </div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
 </form>
 
 {% endblock %}
@@ -171,128 +161,128 @@
 {% block script %}
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
-    reviewersSearchWord = "";
-    reviewers = document.getElementsByClassName('reviewersOption');
-    reviewersList = document.getElementsByClassName('reviewersList');
-    document.getElementById('reviewersDropdownSearch').addEventListener('input', function (event) {
-        reviewersSearchWord = this.value;
+	reviewersSearchWord = "";
+	reviewers = document.getElementsByClassName('reviewersOption');
+	reviewersList = document.getElementsByClassName('reviewersList');
+	document.getElementById('reviewersDropdownSearch').addEventListener('input', function (event) {
+		reviewersSearchWord = this.value;
 
-        for (i = 0; i < reviewers.length; ++i) {
-            if (!reviewers[i].innerText.trim().toLowerCase().includes(reviewersSearchWord.toLowerCase()))
-                reviewers[i].classList.add('d-none');
-            else
-                reviewers[i].classList.remove('d-none');
-        }
-    });
+		for (i = 0; i < reviewers.length; ++i) {
+			if (!reviewers[i].innerText.trim().toLowerCase().includes(reviewersSearchWord.toLowerCase()))
+				reviewers[i].classList.add('d-none');
+			else
+				reviewers[i].classList.remove('d-none');
+		}
+	});
 
-    for (i = 0; i < reviewers.length; ++i) {
-        reviewers[i].getElementsByTagName('input')[0].addEventListener('change', function (event) {
-            for (i = 0; i < reviewersList.length; ++i) {
-                if (reviewersList[i].innerText.trim() === this.parentNode.innerText.trim()) {
-                    if (event.currentTarget.checked)
-                        reviewersList[i].classList.remove('d-none');
-                    else
-                        reviewersList[i].classList.add('d-none');
+	for (i = 0; i < reviewers.length; ++i) {
+		reviewers[i].getElementsByTagName('input')[0].addEventListener('change', function (event) {
+			for (i = 0; i < reviewersList.length; ++i) {
+				if (reviewersList[i].innerText.trim() === this.parentNode.innerText.trim()) {
+					if (event.currentTarget.checked)
+						reviewersList[i].classList.remove('d-none');
+					else
+						reviewersList[i].classList.add('d-none');
 
-                    break;
-                }
-            }
-        });
-    }
+					break;
+				}
+			}
+		});
+	}
 
-    assigneesSearchWord = "";
-    assignees = document.getElementsByClassName('assigneesOption');
-    assigneesList = document.getElementsByClassName('assigneesList');
-    document.getElementById('assigneesDropdownSearch').addEventListener('input', function (event) {
-        assigneesSearchWord = this.value;
+	assigneesSearchWord = "";
+	assignees = document.getElementsByClassName('assigneesOption');
+	assigneesList = document.getElementsByClassName('assigneesList');
+	document.getElementById('assigneesDropdownSearch').addEventListener('input', function (event) {
+		assigneesSearchWord = this.value;
 
-        for (i = 0; i < assignees.length; ++i) {
-            if (!assignees[i].innerText.trim().toLowerCase().includes(assigneesSearchWord.toLowerCase()))
-                assignees[i].classList.add('d-none');
-            else
-                assignees[i].classList.remove('d-none');
-        }
-    });
+		for (i = 0; i < assignees.length; ++i) {
+			if (!assignees[i].innerText.trim().toLowerCase().includes(assigneesSearchWord.toLowerCase()))
+				assignees[i].classList.add('d-none');
+			else
+				assignees[i].classList.remove('d-none');
+		}
+	});
 
-    for (i = 0; i < assignees.length; ++i) {
-        assignees[i].getElementsByTagName('input')[0].addEventListener('change', function (event) {
-            for (i = 0; i < assigneesList.length; ++i) {
-                if (assigneesList[i].innerText.trim() === this.parentNode.innerText.trim()) {
-                    if (event.currentTarget.checked)
-                        assigneesList[i].classList.remove('d-none');
-                    else
-                        assigneesList[i].classList.add('d-none');
+	for (i = 0; i < assignees.length; ++i) {
+		assignees[i].getElementsByTagName('input')[0].addEventListener('change', function (event) {
+			for (i = 0; i < assigneesList.length; ++i) {
+				if (assigneesList[i].innerText.trim() === this.parentNode.innerText.trim()) {
+					if (event.currentTarget.checked)
+						assigneesList[i].classList.remove('d-none');
+					else
+						assigneesList[i].classList.add('d-none');
 
-                    break;
-                }
-            }
-        });
-    }
+					break;
+				}
+			}
+		});
+	}
 
-    labelsSearchWord = "";
-    labels = document.getElementsByClassName('labelsOption');
-    labelsList = document.getElementsByClassName('labelsList');
-    document.getElementById('labelsDropdownSearch').addEventListener('input', function (event) {
-        labelsSearchWord = this.value;
+	labelsSearchWord = "";
+	labels = document.getElementsByClassName('labelsOption');
+	labelsList = document.getElementsByClassName('labelsList');
+	document.getElementById('labelsDropdownSearch').addEventListener('input', function (event) {
+		labelsSearchWord = this.value;
 
-        for (i = 0; i < labels.length; ++i) {
-            if (!labels[i].innerText.trim().toLowerCase().includes(labelsSearchWord.toLowerCase()))
-                labels[i].classList.add('d-none');
-            else
-                labels[i].classList.remove('d-none');
-        }
-    });
+		for (i = 0; i < labels.length; ++i) {
+			if (!labels[i].innerText.trim().toLowerCase().includes(labelsSearchWord.toLowerCase()))
+				labels[i].classList.add('d-none');
+			else
+				labels[i].classList.remove('d-none');
+		}
+	});
 
-    for (i = 0; i < labels.length; ++i) {
-        labels[i].getElementsByTagName('input')[0].addEventListener('change', function (event) {
-            for (i = 0; i < labelsList.length; ++i) {
-                if (labelsList[i].innerText.trim() === this.parentNode.innerText.trim()) {
-                    if (event.currentTarget.checked)
-                        labelsList[i].classList.remove('d-none');
-                    else
-                        labelsList[i].classList.add('d-none');
+	for (i = 0; i < labels.length; ++i) {
+		labels[i].getElementsByTagName('input')[0].addEventListener('change', function (event) {
+			for (i = 0; i < labelsList.length; ++i) {
+				if (labelsList[i].innerText.trim() === this.parentNode.innerText.trim()) {
+					if (event.currentTarget.checked)
+						labelsList[i].classList.remove('d-none');
+					else
+						labelsList[i].classList.add('d-none');
 
-                    break;
-                }
-            }
-        });
-    }
+					break;
+				}
+			}
+		});
+	}
 
-    var currentBranch = "9.0.0-branch"
-    document.getElementById('branchesList').addEventListener('input', (event) => {
-        options = document.getElementById(event.target.getAttribute('list')).childNodes;
+	var currentBranch = "9.0.0-branch"
+	document.getElementById('branchesList').addEventListener('input', (event) => {
+		options = document.getElementById(event.target.getAttribute('list')).childNodes;
 
-        for (var i=0; i<options.length; ++i) {
-            if (options[i].value === event.target.value) {
-                let prBody = document.getElementById('textareaWrite');
-                prBody.innerHTML = prBody.innerHTML.replace(currentBranch, event.target.value);
-                currentBranch = event.target.value;
-                break;
-            }
-        }
-        
-    });
+		for (var i = 0; i < options.length; ++i) {
+			if (options[i].value === event.target.value) {
+				let prBody = document.getElementById('textareaWrite');
+				prBody.innerHTML = prBody.innerHTML.replace(currentBranch, event.target.value);
+				currentBranch = event.target.value;
+				break;
+			}
+		}
 
-    window.onload = () => {
-        for (var i = 0; i < reviewers.length; ++i) {
-            if (reviewers[i].getElementsByTagName('input')[0].checked)
-                reviewersList[i].classList.remove('d-none');
+	});
 
-            if (assignees[i].getElementsByTagName('input')[0].checked)
-                assigneesList[i].classList.remove('d-none');
-        }
+	window.onload = () => {
+		for (var i = 0; i < reviewers.length; ++i) {
+			if (reviewers[i].getElementsByTagName('input')[0].checked)
+				reviewersList[i].classList.remove('d-none');
 
-        for (var i = 0; i < labels.length; ++i) {
-            if (labels[i].getElementsByTagName('input')[0].checked)
-                labelsList[i].classList.remove('d-none');
-        }
-    }
+			if (assignees[i].getElementsByTagName('input')[0].checked)
+				assigneesList[i].classList.remove('d-none');
+		}
 
-    document.getElementById('textareaPreviewBtn').addEventListener('click', (event) => {
-        writeValues = document.getElementById('textareaWrite').value.split('\n');
-        for (var i=0; i<writeValues.length; ++i) {
-            document.getElementById('textareaPreview').innerHTML += marked.parse(writeValues[i]);
-        }
-    });
+		for (var i = 0; i < labels.length; ++i) {
+			if (labels[i].getElementsByTagName('input')[0].checked)
+				labelsList[i].classList.remove('d-none');
+		}
+	}
+
+	document.getElementById('textareaPreviewBtn').addEventListener('click', (event) => {
+		writeValues = document.getElementById('textareaWrite').value.split('\n');
+		for (var i = 0; i < writeValues.length; ++i) {
+			document.getElementById('textareaPreview').innerHTML += marked.parse(writeValues[i]);
+		}
+	});
 </script>
 {% endblock %}

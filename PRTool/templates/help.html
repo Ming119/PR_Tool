@@ -1,45 +1,43 @@
 {% extends "base.html" %}
 
-{% block title %}Pull Resquests Tool{% endblock %}
-
 {% block main %}
 <div class="container">
-<h1 class="text-center fw-bold my-3">PR Tool 操作手冊</h1>
+	<h1 class="text-center fw-bold my-3">PR Tool 操作手冊</h1>
 
-<div class="my-5">
-    登入後，請點選 Tab 選擇組別。<br/>
-    如下圖為例，選到Capston 1 tab，之後點選 `Join Capstone 1`<br/>
-    <img src="/static/images/addTab.png" alt="組別Tab" width="50%"><br/>
-    加入後，`Join Capstone 1`按鈕會變成`New Pull Request`按鈕<br/>
-    發 PR 請點`New Pull Request`按鈕<br/>
-    <img src="/static/images/addedTab.png" alt="組別Tab" width="50%"><br/>
-    點擊`New Pull Request`按鈕後的畫面。<br/>
-    操作方式：請點擊紅框處或拖拉檔案方式，上傳 Test Case 測試文件。<br/>
-    ※ 前提是要建立好 branch 並且 branch 名稱要跟 Test Case 測試文件相同才行。<br/>
-    ※ Ex：branch 命稱為 TMD-13246；Test Case 檔名為 TMD-13246<br/>
-    <img src="/static/images/update.png" alt="update" width="50%"><br/>
-    選擇完檔案，會進入 Pull Request 畫面。<br/><br/>
-    
-    需要自行填寫的東西有：<br/>
-    ➢ 填寫 Reviewers、Assignees 以及 Labels ( 僅限第一次使用需要填寫，後續建立只要確認即可 ! )<br/>
-    ➢ 填寫 Base on 哪個分支<br/>
-    ➢ CI Result 連結<br/>
-    <img src="/static/images/PR_1.png" alt="PR" width="50%"><br/>
+	<div class="my-5">
+		登入後，請點選 Tab 選擇組別。<br />
+		如下圖為例，選到Capston 1 tab，之後點選 `Join Capstone 1`<br />
+		<img src="/static/images/addTab.png" alt="組別Tab" width="50%"><br />
+		加入後，`Join Capstone 1`按鈕會變成`New Pull Request`按鈕<br />
+		發 PR 請點`New Pull Request`按鈕<br />
+		<img src="/static/images/addedTab.png" alt="組別Tab" width="50%"><br />
+		點擊`New Pull Request`按鈕後的畫面。<br />
+		操作方式：請點擊紅框處或拖拉檔案方式，上傳 Test Case 測試文件。<br />
+		※ 前提是要建立好 branch 並且 branch 名稱要跟 Test Case 測試文件相同才行。<br />
+		※ Ex：branch 命稱為 TMD-13246；Test Case 檔名為 TMD-13246<br />
+		<img src="/static/images/update.png" alt="update" width="50%"><br />
+		選擇完檔案，會進入 Pull Request 畫面。<br /><br />
 
-    Base on TMD-XXXX 注意：<br/>
-    紅框 1 請輸入 (base on) TMD-XXXX，紅框 2 則會自動更改在紅框所選的分支，但還是請確認一下是否正確。<br/>
-    <img src="/static/images/PR_2.png" alt="PR" width="50%"><br/>
+		需要自行填寫的東西有：<br />
+		➢ 填寫 Reviewers、Assignees 以及 Labels ( 僅限第一次使用需要填寫，後續建立只要確認即可 ! )<br />
+		➢ 填寫 Base on 哪個分支<br />
+		➢ CI Result 連結<br />
+		<img src="/static/images/PR_1.png" alt="PR" width="50%"><br />
 
-    測試步驟檔案匯入內容會在這裡：<br/>
-    <img src="/static/images/PR_3.png" alt="PR" width="50%"><br/>
+		Base on TMD-XXXX 注意：<br />
+		紅框 1 請輸入 (base on) TMD-XXXX，紅框 2 則會自動更改在紅框所選的分支，但還是請確認一下是否正確。<br />
+		<img src="/static/images/PR_2.png" alt="PR" width="50%"><br />
 
-    <b>全部確認完成請按下`Create Pull Request`按鈕，就建立完成囉。</b><br/>
-</div>
+		測試步驟檔案匯入內容會在這裡：<br />
+		<img src="/static/images/PR_3.png" alt="PR" width="50%"><br />
 
-<div class="my-5">
-    <h1 class="fw-bold">Q & A</h1>
-    Q1. 為什麼沒有或不能登出的功能？<br/>
-    A1. 不好意思。由於 GitHub 的問題，所以登出功能沒有辦法成功實現，但無須擔心有設置一天後自動登出。<br/><br/>
-</div>
+		<b>全部確認完成請按下`Create Pull Request`按鈕，就建立完成囉。</b><br />
+	</div>
+
+	<div class="my-5">
+		<h1 class="fw-bold">Q & A</h1>
+		Q1. 為什麼沒有或不能登出的功能？<br />
+		A1. 不好意思。由於 GitHub 的問題，所以登出功能沒有辦法成功實現，但無須擔心有設置一天後自動登出。<br /><br />
+	</div>
 </div>
 {% endblock %}

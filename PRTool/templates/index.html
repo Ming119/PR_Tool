@@ -1,40 +1,42 @@
 {% extends "base.html" %}
 
-{% block title %}Pull Resquests Tool{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.21.0/dist/bootstrap-table.min.css">
+{% endblock %}
 
 {% block main %}
-<div class="container">
-    <div class="toolbar">
-        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-            <input type="radio" class="btn-check" name="btnradio" id="dcTrack" autocomplete="off">
-            <label class="btn btn-outline-primary" for="dcTrack">dcTrack</label>
+<div class="container my-3">
+	<div class="toolbar">
+		<div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+			<input type="radio" class="btn-check" name="btnradio" id="dcTrack" autocomplete="off">
+			<label class="btn btn-outline-primary" for="dcTrack">dcTrack</label>
 
-            <input type="radio" class="btn-check" name="btnradio" id="capstone1" autocomplete="off">
-            <label class="btn btn-outline-primary" for="capstone1">Capstone 1</label>
+			<input type="radio" class="btn-check" name="btnradio" id="capstone1" autocomplete="off">
+			<label class="btn btn-outline-primary" for="capstone1">Capstone 1</label>
 
-            <input type="radio" class="btn-check" name="btnradio" id="capstone2" autocomplete="off">
-            <label class="btn btn-outline-primary" for="capstone2">Capstone 2</label>
-        </div>
-    </div>
+			<input type="radio" class="btn-check" name="btnradio" id="capstone2" autocomplete="off">
+			<label class="btn btn-outline-primary" for="capstone2">Capstone 2</label>
+		</div>
+	</div>
 
-    <div class="mb-5">
-        <table id="PRsTable">
-            <thead>
-                <tr>
-                    <th data-field="number" data-sortable="true" data-formatter="numberFormatter">#</th>
-                    <th data-field="title" data-sortable="true">Title</th>
-                    <th data-field="labels" data-sortable="true" data-formatter="labelsFormatter">Labels</th>
-                    <th data-field="author" data-sortable="true">Author</th>
-                    <th data-field="date" data-sortable="true">Date</th>
-                    <th data-field="base_on" data-sortable="true" data-footer-formatter="footerFormatter">Base on</th>
-                </tr>
-            </thead>
-            <tfoot>
-                <td colspan="5">Total</td>
-                <td></td>
-            </tfoot>
-        </table>
-    </div>
+	<div class="mb-5">
+		<table id="PRsTable">
+			<thead>
+				<tr>
+					<th data-field="number" data-sortable="true" data-formatter="numberFormatter">#</th>
+					<th data-field="title" data-sortable="true">Title</th>
+					<th data-field="labels" data-sortable="true" data-formatter="labelsFormatter">Labels</th>
+					<th data-field="author" data-sortable="true">Author</th>
+					<th data-field="date" data-sortable="true">Date</th>
+					<th data-field="base_on" data-sortable="true" data-footer-formatter="footerFormatter">Base on</th>
+				</tr>
+			</thead>
+			<tfoot>
+				<td colspan="5">Total</td>
+				<td></td>
+			</tfoot>
+		</table>
+	</div>
 </div>
 {% endblock %}
 
@@ -42,106 +44,106 @@
 <script src="https://unpkg.com/bootstrap-table@1.21.0/dist/bootstrap-table.min.js"></script>
 
 <script>
-const $prsTable = $("#PRsTable");
+	const $prsTable = $("#PRsTable");
 
-var team = "{{ kwargs.get('team') }}";
-var currentTeam = team ? team : 'dcTrack';
-var currentState = 'open';
+	var team = "{{ kwargs.get('team') }}";
+	var currentTeam = team ? team : 'dcTrack';
+	var currentState = 'open';
 
-$('#dcTrack').click(() => {
-    currentTeam = 'dcTrack';
-    updateTable();
-});
+	$('#dcTrack').click(() => {
+		currentTeam = 'dcTrack';
+		updateTable();
+	});
 
-$('#capstone1').click(() => {
-    currentTeam = 'capstone1';
-    updateTable();
-});
+	$('#capstone1').click(() => {
+		currentTeam = 'capstone1';
+		updateTable();
+	});
 
-$('#capstone2').click(() => {
-    currentTeam = 'capstone2';
-    updateTable();
-});
+	$('#capstone2').click(() => {
+		currentTeam = 'capstone2';
+		updateTable();
+	});
 
-const updateTable = async () => {
-    $prsTable.bootstrapTable('showLoading');
+	const updateTable = async () => {
+		$prsTable.bootstrapTable('showLoading');
 
-    const res = await fetch(`/fetchPRs?team=${currentTeam}&state=${currentState}`);
-    const data = await res.json();
+		const res = await fetch(`/fetchPRs?team=${currentTeam}&state=${currentState}`);
+		const data = await res.json();
 
-    $prsTable.bootstrapTable('load', data);
+		$prsTable.bootstrapTable('load', data);
 
-    $prsTable.bootstrapTable('hideLoading');
-}
+		$prsTable.bootstrapTable('hideLoading');
+	}
 
-function numberFormatter(value, row) {
-    return `<a href="${row.url}" target="_blank">${value}</a>`;
-}
+	function numberFormatter(value, row) {
+		return `<a href="${row.url}" target="_blank">${value}</a>`;
+	}
 
-function labelsFormatter(value, row) {
-    return value.map(label => `<span class="badge rounded-pill" style="background-color:#${label.color}">${label.name}</span>`).join(' ');
-}
+	function labelsFormatter(value, row) {
+		return value.map(label =>
+			`<span class="badge rounded-pill" style="background-color:#${label.color}">${label.name}</span>`).join(
+			' ');
+	}
 
-function footerFormatter(data) {
-    return data.length;
-}
+	function footerFormatter(data) {
+		return data.length;
+	}
 
-function tableButtons() {
-    buttons = {
-        togglePR: {
-            text: 'Toggle',
-            icon: 'bi bi-toggle-on',
-            attributes: {
-                title: 'Toggle between open and closed pull requests'
-            },
-            event: () => {
-                currentState = currentState === 'open' ? 'closed' : 'open';
-                $('button[name*="togglePR"]').children().toggleClass('bi-toggle-off bi-toggle-on');
-                updateTable();
-            },
-        },
-    }
+	function tableButtons() {
+		buttons = {
+			togglePR: {
+				text: 'Toggle',
+				icon: 'bi bi-toggle-on',
+				attributes: {
+					title: 'Toggle between open and closed pull requests'
+				},
+				event: () => {
+					currentState = currentState === 'open' ? 'closed' : 'open';
+					$('button[name*="togglePR"]').children().toggleClass('bi-toggle-off bi-toggle-on');
+					updateTable();
+				},
+			},
+		}
 
-    if (team) {
-        buttons.newPR = {
-            text: 'New Pull Request',
-            icon: 'bi bi-plus',
-            attributes: {
-                title: 'Create a new pull request'
-            },
-            event: () => {
-                window.location.href = team ? '/uploadFile': '';
-            },
-        }
-    } else {
-        buttons.joinTeam = {
+		if (team) {
+			buttons.newPR = {
+				text: 'New Pull Request',
+				icon: 'bi bi-plus',
+				attributes: {
+					title: 'Create a new pull request'
+				},
+				event: () => {
+					window.location.href = team ? '/uploadFile' : '';
+				},
+			}
+		} else {
+			buttons.joinTeam = {
 
-        }
-    }
+			}
+		}
 
-    return buttons;
-}
+		return buttons;
+	}
 
-window.onload = () => {
-    $prsTable.bootstrapTable({
-        search: true,
-        sortReset: true,
-        showFooter: true,
-        toolbar: '.toolbar',
-        buttons: 'tableButtons',
-    })
+	window.onload = () => {
+		$prsTable.bootstrapTable({
+			search: true,
+			sortReset: true,
+			showFooter: true,
+			toolbar: '.toolbar',
+			buttons: 'tableButtons',
+		})
 
-    if (currentTeam === 'dcTrack') {
-        $('#dcTrack').attr('checked', true);
-    } else if (currentTeam === 'capstone1') {
-        $('#capstone1').attr('checked', true);
-    } else if (currentTeam === 'capstone2') {
-        $('#capstone2').attr('checked', true);
-    }
+		if (currentTeam === 'dcTrack') {
+			$('#dcTrack').attr('checked', true);
+		} else if (currentTeam === 'capstone1') {
+			$('#capstone1').attr('checked', true);
+		} else if (currentTeam === 'capstone2') {
+			$('#capstone2').attr('checked', true);
+		}
 
-    updateTable();
-}
+		updateTable();
+	}
 </script>
-
-
 {% endblock %}
