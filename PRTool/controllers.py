@@ -108,16 +108,21 @@ def orgAccessError():
 @authorization_required
 @org_access_required
 def joinTeam(user):
+    kwargs = {
+        "user": user,
+    }
+    
     team = request.args.get("team")
    
-    if team and TeamMember.add(team, user):
+    if not team:
+        return render_template("joinTeam.html", kwargs=kwargs)
+
+    if TeamMember.add(team, user):
         session["team"] = team
         flash(f"Joined {team}.", "success")
         return redirect(url_for("index"))
-    
-    if team:
-        flash(f"Failed to join {team}, please try again.", "danger")
 
+    flash(f"Failed to join {team}, please try again.", "danger")
     return redirect(url_for("joinTeam"))
 
 @current_app.route("/uploadFile", methods=["GET", "POST"])
