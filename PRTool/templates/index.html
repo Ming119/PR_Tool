@@ -29,10 +29,11 @@
 					<th data-field="author" data-sortable="true">Author</th>
 					<th data-field="date" data-sortable="true">Date</th>
 					<th data-field="base_on" data-sortable="true" data-footer-formatter="footerFormatter">Base on</th>
+					<th data-field="ci_status" data-sortable="true" data-formatter="ciStatusFormatter">CI Status</th>
 				</tr>
 			</thead>
 			<tfoot>
-				<td colspan="5">Total</td>
+				<td colspan="6">Total</td>
 				<td></td>
 			</tfoot>
 		</table>
@@ -84,6 +85,23 @@
 		return value.map(label =>
 			`<span class="badge rounded-pill" style="background-color:#${label.color}">${label.name}</span>`).join(
 			' ');
+	}
+
+	function ciStatusFormatter(value, row) {
+		if (!value) {
+			return `<span class="badge rounded-pill bg-secondary">No CI</span>`;
+		}
+
+		var status = `<a href="${value.url}">`;
+		if (value.color === 'blue') {
+			status += `<i style="color:green;" class="bi bi-check-circle"></i></a>`;
+		} else if (value.color === 'red') {
+			status += `<i style="color:red;" class="bi bi-x-circle"></i></a>`;
+		} else if (value.color === 'yellow'){
+			status += `<i style="color:yellow;" class="bi bi-exclamation-circle"></i></a>`;
+		}
+
+		return status;
 	}
 
 	function footerFormatter(data) {

@@ -67,3 +67,18 @@ def hasOrgAccess():
         return True
     else:
         return False
+
+
+def fetchCI(team):
+    import requests
+    from requests.auth import HTTPBasicAuth
+    from config import CI_URL, CI_USER, CI_PASSWORD
+
+    response = requests.get(
+        f"{CI_URL}/view/{team}_PR/api/json",
+        auth = HTTPBasicAuth(CI_USER, CI_PASSWORD)
+    )
+ 
+    if response.status_code == 200:
+        return response.json()['jobs']
+    return None
