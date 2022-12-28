@@ -15,3 +15,7 @@ GITHUB_CLIENT_SECRET = ""
 OWNER  = "sunbirddcim"
 REPO   = "test_automation"
 BRANCH = "9.1.0-branch"
+
+CI_URL = ""
+CI_USER = ""
+CI_PASSWORD = ""

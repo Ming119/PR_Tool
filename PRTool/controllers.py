@@ -1,7 +1,8 @@
 import base64
 import threading
+import re
 from flask import current_app, request, session, flash, render_template, redirect, url_for, jsonify, copy_current_request_context
-from util import github, authorization_required, org_access_required, team_required
+from util import github, authorization_required, org_access_required, team_required, fetchCI
 
 from models import TeamMember, TeamAssignee, TeamLabel, TeamReviewer
 
@@ -31,7 +32,7 @@ def fetchPRs(user, team):
     issues = github.list_pull_requests(team_members_list, state)
 
     if (state == 'closed'):
-        resp = [{
+        prs = [{
             'number': f"#{pr['number']}",
             'title': pr['title'],
             'date': pr['closed_at'][:10],
@@ -42,14 +43,14 @@ def fetchPRs(user, team):
             } for label in pr['labels']],
             'url': pr['html_url'],
         } for pr in issues['items']]
-        return jsonify(resp)
+        return jsonify(prs)
     
     issues_number = [issue['number'] for issue in issues['items']]
     
     @copy_current_request_context
     def job(issue_num):
         res = github.get_a_pull_request(issue_num)
-        resp.append({
+        prs.append({
             'number': f"#{res['number']}",
             'title': res['title'],
             'date': res['created_at'][:10],
@@ -60,9 +61,10 @@ def fetchPRs(user, team):
             'author': res['user']['login'],
             'base_on': res['base']['ref'],
             'url': res['html_url'],
+            'ci_status': None,
         })
 
-    resp = []
+    prs = []
     threads = [threading.Thread(target=job, args=(issue_number,)) for issue_number in issues_number]
 
     for thread in threads:
@@ -70,7 +72,19 @@ def fetchPRs(user, team):
     for thread in threads:
         thread.join()
 
-    return jsonify(resp)
+    ci_jobs = fetchCI(team)
+    if not ci_jobs: return jsonify(prs)
+
+    for pr in prs:
+        for ci_job in ci_jobs:
+            if re.search(f"^{pr['title']}.*", ci_job['name']):
+                pr['ci_status'] = {
+                    'color': ci_job['color'],
+                    'url': ci_job['url'],
+                }
+                break
+    
+    return jsonify(prs)
 
 @current_app.route("/login/oauth", methods=["GET"])
 def oauth():
