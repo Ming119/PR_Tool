@@ -77,7 +77,11 @@ def fetchPRs(user, team):
 
     for pr in prs:
         for ci_job in ci_jobs:
-            if re.search(f"^{pr['title']}.*", ci_job['name']):
+            title = title.replace('[WIP]', '')
+            title = pr['title'].split('_(')[0]
+            title = title.strip()
+
+            if re.search(f"^{title}.*", ci_job['name']):
                 pr['ci_status'] = {
                     'color': ci_job['color'],
                     'url': ci_job['url'],
@@ -215,6 +219,7 @@ def newPullRequest(user, team):
 
     template = github.get_repository_content("pull_request_template.md")
 
+    # can speed up by using multi-threading
     kwargs["branches"] = []
     kwargs["members"] = []
     page = 1
@@ -233,7 +238,7 @@ def newPullRequest(user, team):
     
     kwargs["allLabels"] = github.list_label()
 
-    kwargs["title"] = session.get("fileName").replace(".txt", "")
+    kwargs["title"] = session.get("fileName").replace(".txt", f"_({kwargs['team']}Team)")
     kwargs["body"] = base64.b64decode(template.get("content")) \
                         .decode('utf-8') \
                         .replace('## Your one line summary goes here (additional details go at the end)\n', f'This branch is based on `{github.BRANCH}`\nWe have already run CI.\nPlease have a look.\n', 1) \
@@ -242,13 +247,9 @@ def newPullRequest(user, team):
                         .replace('\n', '&#13;&#10;') \
                     + session.get('fileContent').replace('\r\n', '&#13;&#10;')
 
-    teamReviewers = TeamReviewer.getTeamReviewers(kwargs.get("team"))
-    teamAssignees = TeamAssignee.getTeamAssignees(kwargs.get("team"))
-    teamLabels    = TeamLabel.getTeamLabels(kwargs.get("team"))
-
-    kwargs["reviewers"] = [teamReviewer.reviewer for teamReviewer in teamReviewers]
-    kwargs["assignees"] = [teamAssignee.assignee for teamAssignee in teamAssignees]
-    kwargs["labels"]    = [teamLabel.label       for teamLabel    in teamLabels   ]
+    kwargs["reviewers"] = [teamReviewer.reviewer for teamReviewer in TeamReviewer.getTeamReviewers(kwargs.get("team"))]
+    kwargs["assignees"] = [teamAssignee.assignee for teamAssignee in TeamAssignee.getTeamAssignees(kwargs.get("team"))]
+    kwargs["labels"]    = [teamLabel.label       for teamLabel    in TeamLabel.getTeamLabels(kwargs.get("team"))      ]
 
     return render_template("newPullRequest.html", kwargs=kwargs)
 
