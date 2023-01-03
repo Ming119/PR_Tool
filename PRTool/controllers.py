@@ -51,7 +51,7 @@ def fetchPRs(user, team):
     def job(issue_num):
         res = github.get_a_pull_request(issue_num)
         prs.append({
-            'number': f"#{res['number']}",
+            'number': res['number'],
             'title': res['title'],
             'date': res['created_at'][:10],
             'labels': [{
@@ -219,7 +219,6 @@ def newPullRequest(user, team):
 
     template = github.get_repository_content("pull_request_template.md")
 
-    # can speed up by using multi-threading
     kwargs["branches"] = []
     kwargs["members"] = []
     page = 1
