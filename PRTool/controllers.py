@@ -77,8 +77,8 @@ def fetchPRs(user, team):
 
     for pr in prs:
         for ci_job in ci_jobs:
-            title = title.replace('[WIP]', '')
-            title = pr['title'].split('_(')[0]
+            title = pr['title'].replace('[WIP]', '')
+            title = title.split('_(')[0]
             title = title.strip()
 
             if re.search(f"^{title}.*", ci_job['name']):
