@@ -28,38 +28,39 @@
 					<th data-field="labels" data-sortable="true" data-formatter="labelsFormatter">Labels</th>
 					<th data-field="author" data-sortable="true">Author</th>
 					<th data-field="date" data-sortable="true">Date</th>
-					<th data-field="base_on" data-sortable="true" data-footer-formatter="footerFormatter">Base on</th>
+					<th data-field="base_on" data-sortable="true">Base on</th>
 					<th data-field="ci_status" data-sortable="true" data-formatter="ciStatusFormatter">CI Status</th>
 				</tr>
 			</thead>
-			<tfoot>
-				<td colspan="6">Total</td>
-				<td></td>
-			</tfoot>
 		</table>
 	</div>
 </div>
 
+<!-- CI status icon -->
 <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
 	<symbol id="icon-aborted" fill="currentColor" viewBox="0 0 16 16">
-		<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-		<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+		<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+		<path
+			d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
 	</symbol>
 	<symbol id="icon-disabled" fill="currentColor" viewBox="0 0 16 16">
-		<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-		<path d="M11.354 4.646a.5.5 0 0 0-.708 0l-6 6a.5.5 0 0 0 .708.708l6-6a.5.5 0 0 0 0-.708z"/>
+		<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+		<path d="M11.354 4.646a.5.5 0 0 0-.708 0l-6 6a.5.5 0 0 0 .708.708l6-6a.5.5 0 0 0 0-.708z" />
 	</symbol>
 	<symbol id="icon-blue" fill="currentColor" viewBox="0 0 16 16">
-		<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-		<path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+		<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+		<path
+			d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z" />
 	</symbol>
 	<symbol id="icon-red" fill="currentColor" viewBox="0 0 16 16">
-		<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-		<path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+		<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+		<path
+			d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
 	</symbol>
 	<symbol id="icon-yellow" fill="currentColor" viewBox="0 0 16 16">
-		<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-		<path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+		<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+		<path
+			d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" />
 	</symbol>
 </svg>
 {% endblock %}
@@ -96,40 +97,37 @@
 		const data = await res.json();
 
 		$prsTable.bootstrapTable('load', data);
-
 		$prsTable.bootstrapTable('hideLoading');
 	}
 
 	function numberFormatter(value, row) {
-		return `<a href="${row.url}" target="_blank">${value}</a>`;
+		return `<a href="${row.url}" target="_blank">#${value}</a>`;
 	}
 
 	function labelsFormatter(value, row) {
 		return value.map(label =>
-			`<span class="badge rounded-pill" style="background-color:#${label.color}">${label.name}</span>`).join(
-			' ');
+			`<span class="badge rounded-pill" style="background-color:#${label.color}">${label.name}</span>`).join(' ');
 	}
 
 	function ciStatusFormatter(value) {
-		if (!value)
-			return `<span class="badge rounded-pill bg-secondary">No CI</span>`;
+		if (!value) return `<span class="badge rounded-pill bg-secondary">No CI</span>`;
 
-		var color  = 'gray';
-		var icon   = value.color.replace('_anime', '');
+		var color = 'gray';
+		var icon = value.color.replace('_anime', '');
 
 		if (value.color !== 'aborted' && value.color !== 'disabled' && value.color !== 'notbuilt')
 			if (icon === 'yellow') color = 'orange';
 			else if (icon === 'blue') color = 'green';
-			else color = icon;
+		else color = icon;
 
 		const ci_status = document.createElement("a");
-		const svg       = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-		const use       = document.createElementNS("http://www.w3.org/2000/svg", "use");
-		
+		const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+
 		ci_status.href = value.url;
 		ci_status.style.color = color;
 		ci_status.className = "position-relative d-flex align-items-center";
-		
+
 		svg.setAttributeNS(null, "class", "z-index-1 position-absolute");
 		svg.setAttributeNS(null, "width", "1rem");
 		svg.setAttributeNS(null, "height", "1rem");
@@ -138,23 +136,28 @@
 
 		svg.appendChild(use);
 		ci_status.appendChild(svg);
-		
+
 		if (value.color.includes('_anime')) {
 			var loading_div = document.createElement("div");
 			loading_div.className = "z-index-2 position-absolute spinner-border spinner-border-sm";
-			// loading_div.setAttribute("role", "status");
 			ci_status.appendChild(loading_div);
 		}
 
 		return ci_status.outerHTML;
 	}
 
-	function footerFormatter(data) {
-		return data.length;
-	}
-
 	function tableButtons() {
 		buttons = {
+			refresh: {
+				text: 'Refresh',
+				icon: 'bi bi-arrow-clockwise',
+				attributes: {
+					title: 'Refresh the table'
+				},
+				event: () => {
+					updateTable();
+				},
+			},
 			togglePR: {
 				text: 'Toggle',
 				icon: 'bi bi-toggle-on',
@@ -167,22 +170,15 @@
 					updateTable();
 				},
 			},
-		}
-
-		if (team) {
-			buttons.newPR = {
+			newPR: {
 				text: 'New Pull Request',
 				icon: 'bi bi-plus',
 				attributes: {
 					title: 'Create a new pull request'
 				},
 				event: () => {
-					window.location.href = team ? '/uploadFile' : '';
+					window.location.href = '/uploadFile';
 				},
-			}
-		} else {
-			buttons.joinTeam = {
-
 			}
 		}
 
@@ -193,7 +189,6 @@
 		$prsTable.bootstrapTable({
 			search: true,
 			sortReset: true,
-			showFooter: true,
 			toolbar: '.toolbar',
 			buttons: 'tableButtons',
 		})
