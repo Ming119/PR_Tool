@@ -194,17 +194,14 @@ def newPullRequest(user, team):
         
         @copy_current_request_context
         def job_request_reviewers_for_a_pull_request(reviewers):
-            current_app.app_context().push()
             github.request_reviewers_for_a_pull_request(pull_number=res["number"], reviewers=reviewers)
         
         @copy_current_request_context
         def add_assignees_to_an_issue(assignees):
-            current_app.app_context().push()
             github.add_assignees_to_an_issue(issue_number=res["number"], assignees=assignees)
         
         @copy_current_request_context
         def add_labels_to_an_issue(lables):
-            current_app.app_context().push()
             github.add_labels_to_an_issue(issue_number=res["number"], labels=lables)
 
         threads = [threading.Thread(target=job_request_reviewers_for_a_pull_request, args=(reviewers,)),
