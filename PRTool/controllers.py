@@ -236,7 +236,7 @@ def newPullRequest(user, team):
     
     kwargs["allLabels"] = github.list_label()
 
-    kwargs["title"] = session.get("fileName").replace(".txt", f"_({kwargs['team']}Team)")
+    kwargs["title"] = session.get("fileName").replace(".txt", "")
     kwargs["body"] = base64.b64decode(template.get("content")) \
                         .decode('utf-8') \
                         .replace('## Your one line summary goes here (additional details go at the end)\n', f'This branch is based on `{github.BRANCH}`\nWe have already run CI.\nPlease have a look.\n', 1) \
