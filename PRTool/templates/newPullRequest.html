@@ -282,7 +282,7 @@
 		document.getElementById('textareaPreview').innerHTML = "";
 		writeValues = document.getElementById('textareaWrite').value.split('\n');
 		for (var i = 0; i < writeValues.length; ++i) {
-			document.getElementById('textareaPreview').innerHTML += marked.parse(writeValues[i]);
+			document.getElementById('textareaPreview').innerHTML = marked.parse(writeValues[i]);
 		}
 	});
 </script>
