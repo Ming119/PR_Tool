@@ -126,6 +126,7 @@
 
 		ci_status.href = value.url;
 		ci_status.style.color = color;
+		ci_status.target = "_blank"
 		ci_status.className = "position-relative d-flex align-items-center";
 
 		svg.setAttributeNS(null, "class", "z-index-1 position-absolute");
@@ -148,7 +149,7 @@
 
 	function tableButtons() {
 		buttons = {
-			refresh: {
+			refreshBtn: {
 				text: 'Refresh',
 				icon: 'bi bi-arrow-clockwise',
 				attributes: {

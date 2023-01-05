@@ -39,7 +39,7 @@
 	<div class="row my-3">
 		<div class="col-9">
 			<div class="border rounded container mb-4">
-				<input type="text" class="form-control bg-light my-2" value="{{ kwargs.get('title') }}" name="title" required />
+				<input type="text" class="form-control bg-light my-2" value="{{ kwargs.get('title') }}_({{ kwargs.get('team') }}Team)" name="title" required />
 				<nav class="nav nav-tabs">
 					<button type='button' class="nav-link active" id="textareaWriteBtn" data-bs-toggle="tab" data-bs-target="#textareaWrite"
 						aria-controls="textareaWrite">Write</button>
@@ -279,6 +279,7 @@
 	}
 
 	document.getElementById('textareaPreviewBtn').addEventListener('click', (event) => {
+		document.getElementById('textareaPreview').innerHTML = "";
 		writeValues = document.getElementById('textareaWrite').value.split('\n');
 		for (var i = 0; i < writeValues.length; ++i) {
 			document.getElementById('textareaPreview').innerHTML = marked.parse(writeValues[i]);

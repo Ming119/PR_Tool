@@ -33,7 +33,7 @@ def fetchPRs(user, team):
 
     if (state == 'closed'):
         prs = [{
-            'number': f"#{pr['number']}",
+            'number': pr['number'],
             'title': pr['title'],
             'date': pr['closed_at'][:10],
             'author': pr['user']['login'],
